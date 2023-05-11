@@ -54,7 +54,9 @@ As the second persona you will be able to create, see /read, edit and delete (CR
 	<img align="center" height="50" width="60" src="https://github.com/devicons/devicon/blob/v2.15.1/icons/express/express-original-wordmark.svg" alt="Macedovin-Knex" />
 	<img align="center" height="40" width="45" src="./README-assets/Multer-icon.png" alt="Macedovin-Multer" />
 	<img align="center" height="80" width="110" src="./README-assets/Beekeeper-Studio.svg" alt="Macedovin-Beekeeper" />	
-	<img align="center" height="80" width="110" src="./README-assets/Insomnia.svg" alt="Macedovin-Insomnia" />	
+	<img align="center" height="80" width="110" src="./README-assets/Insomnia.svg" alt="Macedovin-Insomnia" />
+	<img align="center" height="50" width="110" src="./README-assets/jwtio-json-web-token.svg" alt="Macedovin-JSON Web Token" />	
+	<img align="center" height="40" width="100" src="./README-assets/Bcryptjs.png" alt="Macedovin-BcryptJS" />
 </div>
 
 ## Functionalities
