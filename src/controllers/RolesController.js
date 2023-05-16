@@ -5,6 +5,10 @@ class RolesController {
   async create(request, response) {
     const { name, description } = request.body;
 
+    if (!name || !description) {
+      throw new AppError('Nome e descrição são obrigatórios.');
+    }    
+
     const existRole = await knex('roles').where({ name }).first();
 
     if (existRole) {
@@ -17,12 +21,7 @@ class RolesController {
     })
     .returning(['id', 'name', 'description']);
 
-    await knex ('users_roles').insert({
-      role_id: role.id
-    });
-
     return response.status(201).json({
-      role,
       message: 'Persona cadastrada com sucesso.'
     });
   }
