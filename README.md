@@ -62,7 +62,8 @@ As the second persona you will be able to create, see /read, edit and delete (CR
 ## Functionalities
 
 - Register users;
-- Update user name, email, password, and avatar
+- Update user name, email, password, and avatar;
+- If Administrator, list all users and change their personas, including them also as administrator;
 
 
 

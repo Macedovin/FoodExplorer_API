@@ -18,8 +18,6 @@ const ensureUserRoles = (role) => {
       
     const matchedRoles = userRolesName.some(r => role.includes(r));
 
-    console.log(userRoles, userRolesName, matchedRoles);
-
     if(matchedRoles){
 
       return next();

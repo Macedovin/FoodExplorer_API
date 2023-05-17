@@ -7,39 +7,83 @@ const AppError = require('../utils/AppError');
 class UsersController {
   async create(request, response) {
     const { name, email, password, roles } = request.body;
-
+    
     const emailInUse = await knex('users').where({ email }).first();
-
+    
     if (emailInUse) {
       throw new AppError('Este email já esta em uso.');
-    }
-
+    }    
+    
     const hashedPassword = await hash(password, 8);
     
-    const [userCreated] = await knex('users').insert({
-      name,
-      email,
-      password: hashedPassword
-    })
-    .returning(['id', 'name', 'email', 'created_at']);
-        
-    await knex ('users_roles').insert({
-      user_id: userCreated.id
-    });
+    let userCreated = {};
+
+    if(roles) {
+
+      const rolesID = await knex('roles')
+      .select(['id'])
+      .whereIn('name', roles)
+      .returning(['id']);    
+  
+      console.log(rolesID, '-> 1');
       
+      if (roles.length !== rolesID.length) {
+        console.log(rolesID, roles.length, 'X', rolesID.length);
+
+        throw new AppError('Persona não existente. Cadastre todas as personas antes de utilizá-las.');
+      }
+
+      const rolesToInsert = rolesID.map(({ id }) => id);
+
+      [userCreated] = await knex('users').insert({
+        name,
+        email,
+        password: hashedPassword
+      })
+      .returning(['id', 'name', 'email', 'created_at']);
+
+      console.log('Estou aqui', rolesToInsert, userCreated, userCreated.id);
+
+      for (let i = 0; i < rolesID.length; i++) {
+  
+        await knex('users_roles').insert([
+          {
+            role_id: rolesToInsert[i],
+            user_id: userCreated.id 
+          }
+        ]);
+      } 
+    }
+    
+    if (!roles) {
+      
+      [userCreated] = await knex('users').insert({
+        name,
+        email,
+        password: hashedPassword
+      })
+      .returning(['id', 'name', 'email', 'created_at']);
+      
+      console.log('67', userCreated, userCreated.id);
+      
+      await knex('users_roles').insert({
+        role_id: 1,
+        user_id: userCreated.id
+      });
+    } 
+
     return response.status(201).json({
       userCreated,
       message: 'Usuário cadastrado com sucesso'
     });
   }
   
-  async update(request, response) {
-    
+  async update(request, response) {    
     const { new_name, new_email, new_password, current_password } = request.body;
 
-    const { id } = request.params;
+    const user_id = request.user.id;
 
-    const userInfos = await knex('users').where({ id }).first();
+    const userInfos = await knex('users').where({ id: user_id }).first();
 
     let updated_data = { ...userInfos };
 
@@ -80,7 +124,7 @@ class UsersController {
     }
 
     const [updatedUser] = await knex('users')
-      .where({ id })
+      .where({ id: user_id })
       .update({
         name: updated_data.name,
         email: updated_data.email,
@@ -95,17 +139,22 @@ class UsersController {
     })
   }
 
-  async index(request, response) {
-    const { id } = request.params;
-    
-    const appUsers = await knex.select()
-      .table('users');
+  async show(request, response) {
+    const user_id = request.user.id;
 
-    return response.json({
-      appUsers,
-      message: 'Requisição bem sucedida.'
-    })
-  } 
+    const rolesOfThisUser = await knex('users_roles')
+    .select([
+      'roles.name as roles_name'
+    ])
+    .where({ user_id })
+    .innerJoin('users', 'users.id', 'users_roles.user_id')
+    .innerJoin('roles', 'roles.id', 'users_roles.role_id')
+    
+    const onlyNamesOfRoles = rolesOfThisUser.map(({ roles_name }) => roles_name);
+
+    return response.json(onlyNamesOfRoles);
+  }
+
 }
 
 module.exports = UsersController;

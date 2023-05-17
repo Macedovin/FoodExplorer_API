@@ -19,7 +19,7 @@ class IngredientsController {
     await knex('ingredients').insert({ name });
 
     return response.status(201).json({
-      message: 'Ingrediente criado com sucesso.'
+      message: 'Ingrediente cadastrado com sucesso.'
     })
   } 
 
