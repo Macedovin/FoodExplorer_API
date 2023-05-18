@@ -18,8 +18,6 @@ class Dish_categoriesController {
     const [category] = await knex('dish_categories').insert({ name })
     .returning(['id', 'name']);
 
-    console.log(typeof category, '->', category);
-
     return response.status(201).json({
       message: 'Categoria cadastrada com sucesso.'
     });

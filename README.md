@@ -50,13 +50,12 @@ As the second persona you will be able to create, see /read, edit and delete (CR
 	<img align="center" height="40" width="40" src="https://github.com/devicons/devicon/blob/v2.15.1/icons/npm/npm-original-wordmark.svg" alt="Macedovin-NPM" />
 	<img align="center" height="60" width="60" src="https://github.com/devicons/devicon/blob/v2.15.1/icons/sqlite/sqlite-original-wordmark.svg" alt="Macedovin-SQLite" />
 	<img align="center" height="30" width="70" src="https://google.github.io/sqlcommenter/images/knex-logo.png" alt="Macedovin-Knex" />
-	<img align="center" height="60" width="70" src="https://github.com/devicons/devicon/blob/v2.15.1/icons/express/express-original-wordmark.svg" alt="Macedovin-Knex" />
-	<img align="center" height="50" width="60" src="https://github.com/devicons/devicon/blob/v2.15.1/icons/express/express-original-wordmark.svg" alt="Macedovin-Knex" />
+	<img align="center" height="60" width="70" src="https://github.com/devicons/devicon/blob/v2.15.1/icons/express/express-original-wordmark.svg" alt="Macedovin-Express" />
 	<img align="center" height="40" width="45" src="./README-assets/Multer-icon.png" alt="Macedovin-Multer" />
 	<img align="center" height="80" width="110" src="./README-assets/Beekeeper-Studio.svg" alt="Macedovin-Beekeeper" />	
 	<img align="center" height="80" width="110" src="./README-assets/Insomnia.svg" alt="Macedovin-Insomnia" />
-	<img align="center" height="50" width="110" src="./README-assets/jwtio-json-web-token.svg" alt="Macedovin-JSON Web Token" />	
-	<img align="center" height="40" width="100" src="./README-assets/Bcryptjs.png" alt="Macedovin-BcryptJS" />
+	<img align="center" height="40" width="100" src="./REsADME-assets/jwtio-json-web-token.svg" alt="Macedovin-JSON Web Token" />	
+	<img align="center" height="30" width="80" src="./README-assets/Bcryptjs.png" alt="Macedovin-BcryptJS" />
 </div>
 
 ## Functionalities

@@ -24,11 +24,8 @@ class UsersController {
       .select(['id'])
       .whereIn('name', roles)
       .returning(['id']);    
-  
-      console.log(rolesID, '-> 1');
       
       if (roles.length !== rolesID.length) {
-        console.log(rolesID, roles.length, 'X', rolesID.length);
 
         throw new AppError('Persona não existente. Cadastre todas as personas antes de utilizá-las.');
       }
@@ -41,8 +38,6 @@ class UsersController {
         password: hashedPassword
       })
       .returning(['id', 'name', 'email', 'created_at']);
-
-      console.log('Estou aqui', rolesToInsert, userCreated, userCreated.id);
 
       for (let i = 0; i < rolesID.length; i++) {
   
@@ -63,8 +58,6 @@ class UsersController {
         password: hashedPassword
       })
       .returning(['id', 'name', 'email', 'created_at']);
-      
-      console.log('67', userCreated, userCreated.id);
       
       await knex('users_roles').insert({
         role_id: 1,

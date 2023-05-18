@@ -14,4 +14,6 @@ users_rolesRoutes.use(ensureAuthenticated);
 
 users_rolesRoutes.get('/', ensureUserRoles(['ROLE_ADMIN']), users_rolesController.index);
 
+users_rolesRoutes.patch('/:id', ensureUserRoles(['ROLE_ADMIN']), users_rolesController.update);
+
 module.exports = users_rolesRoutes;

@@ -12,4 +12,6 @@ usersRoutes.post('/', usersController.create);
 
 usersRoutes.put('/', ensureAuthenticated, usersController.update);
 
+usersRoutes.get('/roles', ensureAuthenticated, usersController.show);
+
 module.exports = usersRoutes;
