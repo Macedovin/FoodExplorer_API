@@ -12,8 +12,10 @@ const users_rolesController = new Users_rolesController();
 
 users_rolesRoutes.use(ensureAuthenticated);
 
-users_rolesRoutes.get('/', ensureUserRoles(['ROLE_ADMIN']), users_rolesController.index);
+users_rolesRoutes.use(ensureUserRoles(['ROLE_ADMIN']));
 
-users_rolesRoutes.patch('/:id', ensureUserRoles(['ROLE_ADMIN']), users_rolesController.update);
+users_rolesRoutes.get('/', users_rolesController.index);
+
+users_rolesRoutes.patch('/:id', users_rolesController.update);
 
 module.exports = users_rolesRoutes;

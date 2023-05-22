@@ -2,7 +2,6 @@ const knex = require('../database/knex');
 const AppError = require('../utils/AppError');
 
 class Users_roles {
-
   async index(request, response) {
     const usersWithRoles = await knex('users_roles')
       .select([
@@ -30,8 +29,22 @@ class Users_roles {
 
     const { id } = request.params;
 
+    const userWithRoles = await knex('users_roles')
+    .select([
+      'user_id',
+      'role_id',
+      'roles.name as role_name'
+    ])
+    .where({ user_id: id })
+    .innerJoin('users', 'users.id', 'users_roles.user_id')
+    .innerJoin('roles', 'roles.id', 'users_roles.role_id')
+    
+    if(userWithRoles.length === 0) {
+      throw new AppError('Usuário não cadastrado.');
+    }
+
     if(new_userRole.length > 1) {
-      throw new AppError('Insira somente uma nova persona por vez para acada usuário.')
+      throw new AppError('Insira somente uma nova persona por vez para cada usuário.')
     }
 
     const existRole = await knex('roles')
@@ -45,20 +58,6 @@ class Users_roles {
 
     const validRolesToInsert = existRole.map(({ id }) => id);
 
-    const userWithRoles = await knex('users_roles')
-    .select([
-      'user_id',
-      'role_id',
-      'roles.name as role_name'
-    ])
-    .where({ user_id: id })
-    .innerJoin('users', 'users.id', 'users_roles.user_id')
-    .innerJoin('roles', 'roles.id', 'users_roles.role_id')
-
-    if(!userWithRoles) {
-      throw new AppError('Usuário não cadastrado.');
-    }
-    
     const userWithRolesID = userWithRoles.map(user => user.user_id);
 
     const rolesOfThisUser = userWithRoles.map(role => role.role_id);

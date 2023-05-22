@@ -54,15 +54,25 @@ As the second persona you will be able to create, see /read, edit and delete (CR
 	<img align="center" height="40" width="45" src="./README-assets/Multer-icon.png" alt="Macedovin-Multer" />
 	<img align="center" height="80" width="110" src="./README-assets/Beekeeper-Studio.svg" alt="Macedovin-Beekeeper" />	
 	<img align="center" height="80" width="110" src="./README-assets/Insomnia.svg" alt="Macedovin-Insomnia" />
-	<img align="center" height="40" width="100" src="./REsADME-assets/jwtio-json-web-token.svg" alt="Macedovin-JSON Web Token" />	
+	<img align="center" height="40" width="100" src="./README-assets/jwtio-json-web-token.svg" alt="Macedovin-JSON Web Token" />	
 	<img align="center" height="30" width="80" src="./README-assets/Bcryptjs.png" alt="Macedovin-BcryptJS" />
 </div>
 
 ## Functionalities
 
-- Register users;
+- Register a user;
 - Update user name, email, password, and avatar;
-- If Administrator, list all users and change their personas, including them also as administrator;
+- Show the details of an specific dish;
+- See/ read/ list/ index all available dishes;
 
+	- In addition to being able to filter them by name or ingredient;
 
+- As Administrator:
+
+> Do everything a default user can do and more.
+
+	- List all users and change their personas, including them as other administrators;
+	- Create, list/ read/ index and delete dishes categories;
+	- Create and delete ingredients for the dishes;
+	- Create, update and delete dishes;
 

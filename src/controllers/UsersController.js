@@ -67,7 +67,7 @@ class UsersController {
 
     return response.status(201).json({
       userCreated,
-      message: 'Usuário cadastrado com sucesso'
+      message: 'Usuário cadastrado com sucesso.'
     });
   }
   

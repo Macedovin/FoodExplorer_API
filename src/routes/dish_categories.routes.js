@@ -12,8 +12,12 @@ const ensureUserRoles = require('../middlewares/ensureUserRoles');
 
 dish_categoriesRoutes.use(ensureAuthenticated);
 
-dish_categoriesRoutes.post('/', ensureUserRoles(['ROLE_ADMIN']),  dish_categoriesController.create);
+dish_categoriesRoutes.use(ensureUserRoles(['ROLE_ADMIN']));
 
-dish_categoriesRoutes.get('/:id', ensureUserRoles(['ROLE_ADMIN']), dish_categoriesController.index);
+dish_categoriesRoutes.post('/', dish_categoriesController.create);
+
+dish_categoriesRoutes.get('/', dish_categoriesController.index);
+
+dish_categoriesRoutes.delete('/:id', dish_categoriesController.delete);
 
 module.exports = dish_categoriesRoutes;

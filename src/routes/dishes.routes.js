@@ -18,6 +18,8 @@ dishesRoutes.put('/:id', ensureUserRoles(['ROLE_ADMIN']), dishesController.updat
 
 dishesRoutes.get('/:id', dishesController.show);
 
+dishesRoutes.get('/', dishesController.index);
+
 dishesRoutes.delete('/:id', ensureUserRoles(['ROLE_ADMIN']), dishesController.delete);
 
 module.exports = dishesRoutes;

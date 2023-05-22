@@ -12,8 +12,10 @@ const ensureUserRoles = require('../middlewares/ensureUserRoles');
 
 ingredientsRoutes.use(ensureAuthenticated);
 
-ingredientsRoutes.post('/', ensureUserRoles(['ROLE_ADMIN']), ingredientsController.create);
+ingredientsRoutes.use(ensureUserRoles(['ROLE_ADMIN']));
 
-ingredientsRoutes.delete('/:id', ensureUserRoles(['ROLE_ADMIN']), ingredientsController.delete);
+ingredientsRoutes.post('/', ingredientsController.create);
+
+ingredientsRoutes.delete('/:id', ingredientsController.delete);
 
 module.exports = ingredientsRoutes;

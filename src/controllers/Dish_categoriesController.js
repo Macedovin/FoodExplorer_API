@@ -29,19 +29,17 @@ class Dish_categoriesController {
       .table('dish_categories')
       .groupBy('id');
 
-    /* const categoryDishes =  */
-
     return response.json(foodCategories);
   }
 
   async delete(request, response) {
-    const { id } = request.body;
+    const { id } = request.params;
 
     await knex('dish_categories').where({ id }).delete();
 
     return response.json({
       message: 'Categoria excluída com sucesso.'
-    })
+    });
   }
 }
 
