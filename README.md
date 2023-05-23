@@ -108,7 +108,7 @@ To view that application functioning follow along the next steps:
 - In the project root directory, install all **project dependencies** by typing this command line:
 
 	```bash
-		npm install
+	npm install
 	```
 
 	> To follow this step, [NodeJS with NPM](https://nodejs.org/) is required.
@@ -116,13 +116,13 @@ To view that application functioning follow along the next steps:
 - The next step is to run the start command line:
 
 	```bash
-		npm start
+	npm start
 	```
 
 - After that, everything going well, the project can be accessed by a localhost port seen in the command line bellow:
 
   ```bash
-		Server is running on port 3333.
+	Server is running on port 3333.
   ```
 
 - This means that a local server is running on the mentioned port;

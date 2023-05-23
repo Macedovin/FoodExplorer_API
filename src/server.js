@@ -3,13 +3,19 @@ require('dotenv/config');
 
 const express = require('express');
 
-const app = express();
-
 const routes = require(`./routes`);
 
 const AppError = require('./utils/AppError');
 
+const uploadConfig = require('./configs/upload');
+
+const app = express();
+
 app.use(express.json());
+
+app.use('/files/avatar', express.static(uploadConfig.USERS_UPLOADS_FOLDER));
+
+app.use('/files/picture', express.static(uploadConfig.DISHES_UPLOADS_FOLDER));
 
 app.use(routes);
 
