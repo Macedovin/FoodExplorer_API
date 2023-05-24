@@ -1,51 +1,60 @@
 const knex = require('../database/knex');
+
 const AppError = require('../utils/AppError');
 
+const DiskStorage = require('../providers/DiskStorage');
+const { response } = require('express');
+ 
 class DishesController {
   async create(request, response) {
-    const { name, description, price, category_id, ingredients } = request.body;
 
-    if (!name || !description || !price || !category_id || !ingredients) {
+    const data = request.body.data;
+    
+    const { name , description, price, category_id, ingredients } = JSON.parse(data);
+
+    const picture = request.file;  
+    
+    if (!name || !description || !price || !category_id) {
       throw new AppError('O preenchimento de todos os campos é obrigatório.');
-    }
-
-    if (ingredients.length === 0) {
-      throw new AppError('Pelo menos um ingrediente deve estar associado a um novo prato.')
-    } 
-
+    }        
+    
     const checkDishNameExist = await knex('dishes').where({ name }).first();
-
+    
     if (checkDishNameExist) {
       throw new AppError('Nome de prato já cadastrado.');
     } 
-
-    const priceIsNumber = isNaN(price);
-
-    if (priceIsNumber) {
+    
+    const priceIsNotNumber = isNaN(price);
+    
+    if (priceIsNotNumber) {
       throw new AppError('O preço do prato deve ser um número.');
     }
-
+    
     const existsCategory = await knex('dish_categories').where({ id: category_id }).first();
-
+    
     if(!existsCategory) {
       throw new AppError('Categoria de prato ainda não cadastrada.')
     }
+    
+    if (ingredients.length === 0) {
+      throw new AppError('Pelo menos um ingrediente deve estar associado a um novo prato.')
+    } 
 
     const alreadyExistIngredientsDB = await knex('ingredients')
       .select(['id', 'name'])
       .whereIn('name', ingredients);
 
-    const existIngredientsName = alreadyExistIngredientsDB.map(({ name }) => name);
+    const alreadyExistIngredientsName = alreadyExistIngredientsDB.map(({ name }) => name);
     
-    const ingredientsOfThisDishToInsert = ingredients.filter(ingredient => !existIngredientsName.includes(ingredient));
+    const ingredientsOfThisDishToInsert = ingredients.filter(ingredient => !alreadyExistIngredientsName.includes(ingredient));
     
     if (ingredientsOfThisDishToInsert.length > 0) {
      
-      const newIngredients = ingredientsOfThisDishToInsert.map(name => {
+      const newIngredientsTableIngredients = ingredientsOfThisDishToInsert.map(name => {
         return { name }
       }); 
       
-      await knex('ingredients').insert(newIngredients)
+      await knex('ingredients').insert(newIngredientsTableIngredients)
       .returning(['id']);
      
     }
@@ -55,33 +64,70 @@ class DishesController {
     .whereIn('name', ingredients);
 
     const allNewIngredientsID = allNewIngredients.map(({ id }) => id);
-
-    const [newDish] = await knex('dishes').insert({
-      name,
-      description,
-      price: price.toFixed(2),
-      category_id
-    })
-    .returning(['id']);  
-
-    for(let i = 0; i < allNewIngredientsID.length; i++){
-
-      await knex('dishes_ingredients').insert({
-        dish_id: newDish.id,
-        ingredient_id: allNewIngredientsID[i]
-      });
-      
-    };
     
+    let newDish = {};
+
+    if(!picture) {
+
+      [newDish] = await knex('dishes').insert({
+        name,
+        description,
+        price: price.toFixed(2),
+        category_id
+      })
+      .returning(['id', 'name', 'description', 'price', 'category_id', 'created_at']);
+      
+      for(let i = 0; i < allNewIngredientsID.length; i++){
+
+        await knex('dishes_ingredients').insert({
+          dish_id: newDish.id,
+          ingredient_id: allNewIngredientsID[i]
+        });
+        
+      }
+    } 
+    
+    if(picture) {
+      
+      const pictureFileName = request.file.filename; 
+
+      const diskStorage = new DiskStorage();
+      
+      const filename = await diskStorage.savePictureFile(pictureFileName);
+      
+      [newDish] = await knex('dishes').insert({
+        name,
+        description,
+        price: price.toFixed(2),
+        category_id,
+        picture: filename
+      })
+      .returning(['id', 'name', 'description', 'price', 'category_id', 'created_at']);
+      
+      for(let i = 0; i < allNewIngredientsID.length; i++){
+
+        await knex('dishes_ingredients').insert({
+          dish_id: newDish.id,
+          ingredient_id: allNewIngredientsID[i]
+        });
+        
+      }
+    }      
+
     return response.status(201).json({
+      ...newDish,
       message: 'Prato cadastrado com sucesso.'
-    });
+    });    
   }
 
   async update(request, response) {
-    const { new_name, new_description, new_price, new_category_id, new_ingredients} = request.body;
+    const data = request.body.data;
+    
+    const { new_name, new_description, new_price, new_category_id, new_ingredients} = JSON.parse(data);
 
     const { id } = request.params;
+
+    const picture = request.file; 
 
     const dishInfos = await knex('dishes').where({ id }).first();
 
@@ -104,11 +150,11 @@ class DishesController {
 
       updateIsBeingSucceeded = true;
     }
-
+    
     if (new_price) {
-      const priceIsNumber = isNaN(new_price);
+      const priceIsNotNumber = isNaN(new_price);
 
-      if (priceIsNumber) {
+      if (priceIsNotNumber) {
         throw new AppError('O preço do prato deve ser um número.');
       }
 
@@ -129,6 +175,22 @@ class DishesController {
       updateIsBeingSucceeded = true;
     }
 
+    if (picture) {
+      const newPictureFileName = request.file.filename;
+
+      const diskStorage = new DiskStorage();
+      
+      if(dishInfos.picture) {
+        await diskStorage.deletePictureFile(dishInfos.picture);
+      }; 
+
+      const fileName = await diskStorage.savePictureFile(newPictureFileName);
+
+      updated_dishData.picture = fileName;
+
+      updateIsBeingSucceeded = true;
+    }
+    
     if (new_ingredients) {
       const ingredientsAlreadyRegistered = await knex('ingredients')
       .select([
@@ -174,48 +236,51 @@ class DishesController {
 
       updateIsBeingSucceeded = true;
     }
-    
-    if (updateIsBeingSucceeded) {
-      await knex('dishes')
-        .where({ id })
-        .update({
-          name: updated_dishData.name,
-          description: updated_dishData.description,
-          price: updated_dishData.price,
-          category_id: updated_dishData.category_id,
-          updated_at: knex.fn.now()
-        });
 
-        const newDishIngredients = await knex('dishes_ingredients')
-        .select([
-          'ingredients.id',
-          'ingredients.name',
-        ])
-        .where({ dish_id: id })
-        .innerJoin('ingredients', 'ingredients.id', 'dishes_ingredients.ingredient_id')
-        .orderBy('ingredients.name'); 
+  if (updateIsBeingSucceeded) {
+    await knex('dishes')
+      .where({ id })
+      .update({
+        name: updated_dishData.name,
+        description: updated_dishData.description,
+        price: updated_dishData.price,
+        category_id: updated_dishData.category_id,
+        picture: updated_dishData.picture,
+        updated_at: knex.fn.now()
+      });
+
+      const newDishIngredients = await knex('dishes_ingredients')
+      .select([
+        'ingredients.id',
+        'ingredients.name',
+      ])
+      .where({ dish_id: id })
+      .innerJoin('ingredients', 'ingredients.id', 'dishes_ingredients.ingredient_id')
+      .orderBy('ingredients.name');  
+
+      const updatedDish = updated_dishData;        
 
       return response.status(201).json([
         {
           message: 'Prato cadastrado com sucesso.'
         },
         {
-            ...dishInfos,
+            updatedDish,
             newDishIngredients
         }
       ]);
       
-    } else {
+  } else {
 
-      throw new AppError('Pelo menos um novo dado deve ser inserido para que seja efetuada a atualização');
+    throw new AppError('Pelo menos um novo dado deve ser inserido para que seja efetuada a atualização');
 
-    }
   }
+}
 
   async show(request, response) {
     const { id }= request.params;
 
-    const [dishDetails] = await knex('dishes').where({ id })
+    const [dishDetails] = await knex('dishes').where({ id });
       
     const dishIngredients = await knex('dishes_ingredients')
       .select([
@@ -225,6 +290,10 @@ class DishesController {
       .where({ dish_id: id })
       .innerJoin('ingredients', 'ingredients.id', 'dishes_ingredients.ingredient_id')
       .orderBy('ingredients.name'); 
+
+      if (!dishDetails) {
+        throw new AppError('Prato não cadastrado.');
+      }
 
     return response.json({
       ...dishDetails,
@@ -239,8 +308,6 @@ class DishesController {
     const nameTrimmed = name.trim();
 
     let dishes;
-    
-    //INGREDIENTES...
 
     if (ingredients) {
 
@@ -260,7 +327,9 @@ class DishesController {
       dishes = await knex('dishes')
         .select()
         .whereLike('name', `%${nameTrimmed}%`)
-        .orderBy('category_id');
+        .orderBy([
+          {column: 'category_id', nulls: 'last'}
+        ]);
     }
 
     const dishesIds = dishes.map(({ id }) => id);
