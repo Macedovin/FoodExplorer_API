@@ -3,7 +3,6 @@ const knex = require('../database/knex');
 const AppError = require('../utils/AppError');
 
 const DiskStorage = require('../providers/DiskStorage');
-const { response } = require('express');
  
 class DishesController {
   async create(request, response) {
@@ -24,10 +23,12 @@ class DishesController {
       throw new AppError('Nome de prato já cadastrado.');
     } 
     
-    const priceIsNotNumber = isNaN(price);
-    
-    if (priceIsNotNumber) {
-      throw new AppError('O preço do prato deve ser um número.');
+    const priceIsNotPositiveFloatNumber = isNaN(price) || price <= 0 || Number.isInteger(price);
+
+    if (priceIsNotPositiveFloatNumber) {
+      
+      throw new AppError('O preço do prato deve ser um número decimal maior do que zero.');
+
     }
     
     const existsCategory = await knex('dish_categories').where({ id: category_id }).first();
@@ -72,7 +73,7 @@ class DishesController {
       [newDish] = await knex('dishes').insert({
         name,
         description,
-        price: price.toFixed(2),
+        price,
         category_id
       })
       .returning(['id', 'name', 'description', 'price', 'category_id', 'created_at']);
@@ -98,7 +99,7 @@ class DishesController {
       [newDish] = await knex('dishes').insert({
         name,
         description,
-        price: price.toFixed(2),
+        price,
         category_id,
         picture: filename
       })
@@ -152,10 +153,10 @@ class DishesController {
     }
     
     if (new_price) {
-      const priceIsNotNumber = isNaN(new_price);
-
-      if (priceIsNotNumber) {
-        throw new AppError('O preço do prato deve ser um número.');
+      const priceIsNotPositiveFloatNumber = isNaN(new_price) || new_price <= 0 || Number.isInteger(new_price);
+    
+      if (priceIsNotPositiveFloatNumber) {
+        throw new AppError('O preço do prato deve ser um número decimal maior que zero.');
       }
 
       updated_dishData.price = new_price;

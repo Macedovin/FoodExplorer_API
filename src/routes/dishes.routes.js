@@ -4,8 +4,6 @@ const dishesRoutes = Router();
 
 const DishesController = require('../controllers/DishesController');
 
-const DishPictureController = require('../controllers/DishPictureController');
-
 const dishesController =  new DishesController();
 
 const ensureAuthenticated = require('../middlewares/ensureAuthenticated');
