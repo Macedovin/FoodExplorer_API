@@ -37,7 +37,7 @@ class UsersController {
         email,
         password: hashedPassword
       })
-      .returning(['id', 'name', 'email', 'created_at']);
+      .returning(['id', 'name', 'email']);
 
       for (let i = 0; i < rolesID.length; i++) {
   
@@ -57,7 +57,7 @@ class UsersController {
         email,
         password: hashedPassword
       })
-      .returning(['id', 'name', 'email', 'created_at']);
+      .returning(['id', 'name', 'email']);
       
       await knex('users_roles').insert({
         role_id: 1,
@@ -65,10 +65,14 @@ class UsersController {
       });
     } 
 
-    return response.status(201).json({
-      userCreated,
-      message: 'Usuário cadastrado com sucesso.'
-    });
+    return response.status(201).json([
+      {
+        userCreated
+      },
+      {        
+        message: 'Usuário cadastrado com sucesso.'
+      } 
+    ]);
   }
   
   async update(request, response) {    

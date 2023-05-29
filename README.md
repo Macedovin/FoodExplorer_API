@@ -56,6 +56,7 @@ As the second persona you will be able to create, see /read, edit and delete (CR
 	<img align="center" height="40" width="45" src="./README-assets/Multer-icon.png" alt="Macedovin-Multer" />
 	<img align="center" height="80" width="110" src="./README-assets/Beekeeper-Studio.svg" alt="Macedovin-Beekeeper" />	
 	<img align="center" height="80" width="110" src="./README-assets/Insomnia.svg" alt="Macedovin-Insomnia" />
+	<img align="center" height="40" width="40" src="https://raw.githubusercontent.com/caolan/async/086485292d80225ba3a22976b92831612e3e2373/logo/async-logo.svg" alt="Macedovin-Async" />
 	<img align="center" height="40" width="100" src="./README-assets/jwtio-json-web-token.svg" alt="Macedovin-JSON Web Token" />	
 	<img align="center" height="30" width="80" src="./README-assets/Bcryptjs.png" alt="Macedovin-BcryptJS" />
 </div>
@@ -83,7 +84,8 @@ As the second persona you will be able to create, see /read, edit and delete (CR
 
 - [initializing the application](#initializing-the-application)
 - [Using the resources](#using-the-resources)
-  - [Usuários](#usuários)
+  - [Users roles](#users-roles)
+	- [Usuários](#usuários)
     - [Criar](#criar-um-usuário)
     - [Atualizar](#atualizar-um-usuário)
     - [Atualizar o Avatar](#atualizar-o-avatar-de-um-usuário)
@@ -136,4 +138,127 @@ To view that application functioning follow along the next steps:
 
 ### Using the resources
 
-- #### 
+- #### **Users roles**
+
+	#### 🟢 **POST /roles**	
+
+	**Description:** Create a role 
+
+	First of all, create useful roles for the establishment. For now, this API is handling tow personas: _administrator_ and _default user_. To create a role, send a request at URL:
+
+	 `http://localhost:3333/roles`
+
+	**ATTENTION**:
+
+	> Use "ROLE_'NEW-ROLE'" as a pattern for the roles.
+	
+	> "ROLE_USER" has to be the first one to receive id (identity/ id = 1), as this will be used later. 
+
+	**Requests**
+
+	```json
+	{
+		"role": "ROLE_USER",
+		"description": "Usuário padrão."
+	}
+	```
+
+	```json
+	{
+		"role": "ROLE_ADMIN",
+		"description": "Administrador."
+	}
+	```
+
+	**Response**
+
+	```json
+	{
+		"status": 201,
+		"message": "Persona cadastrada com sucesso."
+	}
+	```
+
+	#### 🟢 **POST /users**
+
+	**Description:** Create a user
+
+	Second step is create two specific first users: 
+
+	- "Administrator
+
+		> Will manage and can access the hole API having both roles/ personas;
+
+	- "User"
+		
+		> Will have restricted accesses and only one role/ persona ("ROLE_USER"), assigned to him as default;
+	
+	To achieve this, send the requests at URL bellow:
+
+	`http://localhost:3333/users`
+
+	**ATTENTION**:
+
+	> As security, encrypt Administrator password, is advised, using the tool of your choice (MD5HASH was used here). Save it for security and future accesses.
+
+	> All users created without "roles" sended within request will be assigned as _"default users"_. 
+
+	**Requests**
+
+	- **Administrator**
+
+	```json
+	{
+		"name": "Administrador",
+		"email": "admin@foodexplorer.com",
+		"password": "yourEncryptedPassword123",
+		"roles": [
+			"ROLE_USER",
+			"ROLE_ADMIN"
+		]
+	}
+	```
+
+	- **Default user**
+
+	```json
+	{
+		"name": "Usuário",
+		"email": "user@foodexplorer.com",
+		"password": "yourPassword123"
+	}
+	```
+
+	**Responses**
+
+	```json
+	[
+		{
+			"userCreated": {
+				"id": 1,
+				"name": "Administrador",
+				"email": "admin@foodexplorer.com"
+			}
+		},
+		{
+			"status": 201,
+			"message": "Usuário cadastrado com sucesso."
+		}
+	]
+	```
+
+	```json
+	[
+		{
+			"userCreated": {
+				"id": 2,
+				"name": "Usuário",
+				"email": "user@foodexplorer.com"
+			}
+		},
+		{
+			"status": 201,
+			"message": "Usuário cadastrado com sucesso."
+		}
+	]
+	```

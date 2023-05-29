@@ -15,11 +15,10 @@ class RolesController {
       throw new AppError('Esta persona já existe.');
     } 
 
-    const [role] = await knex('roles').insert({
+    await knex('roles').insert({
       name,
       description
-    })
-    .returning(['id', 'name', 'description']);
+    });
 
     return response.status(201).json({
       message: 'Persona cadastrada com sucesso.'

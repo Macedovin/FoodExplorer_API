@@ -76,7 +76,7 @@ class DishesController {
         price,
         category_id
       })
-      .returning(['id', 'name', 'description', 'price', 'category_id', 'created_at']);
+      .returning(['id', 'name', 'description', 'price', 'picture', 'category_id', 'created_at']);
       
       for(let i = 0; i < allNewIngredientsID.length; i++){
 
@@ -103,7 +103,7 @@ class DishesController {
         category_id,
         picture: filename
       })
-      .returning(['id', 'name', 'description', 'price', 'category_id', 'created_at']);
+      .returning(['id', 'name', 'description', 'price', 'picture', 'category_id', 'created_at']);
       
       for(let i = 0; i < allNewIngredientsID.length; i++){
 
@@ -113,12 +113,16 @@ class DishesController {
         });
         
       }
-    }      
+    } 
 
-    return response.status(201).json({
-      ...newDish,
-      message: 'Prato cadastrado com sucesso.'
-    });    
+    return response.status(201).json([
+      {
+        ...newDish
+      },
+      {
+        message: 'Prato cadastrado com sucesso.'
+      }
+    ]);    
   }
 
   async update(request, response) {
