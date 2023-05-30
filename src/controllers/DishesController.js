@@ -125,6 +125,85 @@ class DishesController {
     ]);    
   }
 
+  async index (request, response) {
+    const { name, ingredients } = request.query;
+
+    const nameTrimmed = name.trim();
+
+    let dishes;
+
+    if (ingredients) {
+
+      const filteredIngredients = ingredients.split(',').map(ingredient => ingredient.trim());
+
+      dishes = await knex('dishes_ingredients')
+        .select([
+          'dishes.*'
+        ])
+        .innerJoin('dishes', 'dishes.id', 'dishes_ingredients.dish_id')
+        .innerJoin('ingredients', 'ingredients.id', 'dishes_ingredients.ingredient_id')
+        .whereIn('ingredients.name', filteredIngredients)
+        .orderBy('dishes.name', 'asc');         
+
+    } else {
+
+      dishes = await knex('dishes')
+        .select()
+        .whereLike('name', `%${nameTrimmed}%`)
+        .orderBy([
+          {column: 'category_id', nulls: 'last'}
+        ]);
+    }
+
+    const dishesIds = dishes.map(({ id }) => id);
+
+    const dishIngredients = await knex('dishes_ingredients')
+      .select([
+        'dishes.id as dish_id',
+        'ingredients.*'
+      ])
+      .innerJoin('ingredients', 'ingredients.id', 'dishes_ingredients.ingredient_id')
+      .innerJoin('dishes', 'dishes.id', 'dishes_ingredients.dish_id')
+      .whereIn('dish_id', dishesIds)
+      .orderBy('dishes.id'); 
+
+    const dishesWithIngredients = dishes.map(dish => {
+      const ingredientsOfDish = dishIngredients.filter(ingredient => ingredient.dish_id === dish.id);
+
+      return {
+        ...dish,
+        ingredients: ingredientsOfDish
+      }
+    });
+
+    return response.json(dishesWithIngredients);
+  }
+
+  async show(request, response) {
+    const { id }= request.params;
+
+    const [dishDetails] = await knex('dishes').where({ id });
+      
+    const dishIngredients = await knex('dishes_ingredients')
+      .select([
+        'ingredients.id',
+        'ingredients.name',
+      ])
+      .where({ dish_id: id })
+      .innerJoin('ingredients', 'ingredients.id', 'dishes_ingredients.ingredient_id')
+      .orderBy('ingredients.name'); 
+
+      if (!dishDetails) {
+        throw new AppError('Prato não cadastrado.');
+      }
+
+    return response.json({
+      ...dishDetails,
+      dishIngredients
+    });
+    
+  }
+
   async update(request, response) {
     const data = request.body.data;
     
@@ -242,123 +321,44 @@ class DishesController {
       updateIsBeingSucceeded = true;
     }
 
-  if (updateIsBeingSucceeded) {
-    await knex('dishes')
-      .where({ id })
-      .update({
-        name: updated_dishData.name,
-        description: updated_dishData.description,
-        price: updated_dishData.price,
-        category_id: updated_dishData.category_id,
-        picture: updated_dishData.picture,
-        updated_at: knex.fn.now()
-      });
+    if (updateIsBeingSucceeded) {
+      await knex('dishes')
+        .where({ id })
+        .update({
+          name: updated_dishData.name,
+          description: updated_dishData.description,
+          price: updated_dishData.price,
+          category_id: updated_dishData.category_id,
+          picture: updated_dishData.picture,
+          updated_at: knex.fn.now()
+        });
 
-      const newDishIngredients = await knex('dishes_ingredients')
-      .select([
-        'ingredients.id',
-        'ingredients.name',
-      ])
-      .where({ dish_id: id })
-      .innerJoin('ingredients', 'ingredients.id', 'dishes_ingredients.ingredient_id')
-      .orderBy('ingredients.name');  
+        const newDishIngredients = await knex('dishes_ingredients')
+        .select([
+          'ingredients.id',
+          'ingredients.name',
+        ])
+        .where({ dish_id: id })
+        .innerJoin('ingredients', 'ingredients.id', 'dishes_ingredients.ingredient_id')
+        .orderBy('ingredients.name');  
 
-      const updatedDish = updated_dishData;        
+        const updatedDish = updated_dishData;        
 
-      return response.status(201).json([
-        {
-          message: 'Prato cadastrado com sucesso.'
-        },
-        {
-            updatedDish,
-            newDishIngredients
-        }
-      ]);
+        return response.status(201).json([
+          {
+            message: 'Prato cadastrado com sucesso.'
+          },
+          {
+              updatedDish,
+              newDishIngredients
+          }
+        ]);
       
   } else {
 
     throw new AppError('Pelo menos um novo dado deve ser inserido para que seja efetuada a atualização');
 
   }
-}
-
-  async show(request, response) {
-    const { id }= request.params;
-
-    const [dishDetails] = await knex('dishes').where({ id });
-      
-    const dishIngredients = await knex('dishes_ingredients')
-      .select([
-        'ingredients.id',
-        'ingredients.name',
-      ])
-      .where({ dish_id: id })
-      .innerJoin('ingredients', 'ingredients.id', 'dishes_ingredients.ingredient_id')
-      .orderBy('ingredients.name'); 
-
-      if (!dishDetails) {
-        throw new AppError('Prato não cadastrado.');
-      }
-
-    return response.json({
-      ...dishDetails,
-      dishIngredients
-    });
-    
-  }
-
-  async index (request, response) {
-    const { name, ingredients } = request.query;
-
-    const nameTrimmed = name.trim();
-
-    let dishes;
-
-    if (ingredients) {
-
-      const filteredIngredients = ingredients.split(',').map(ingredient => ingredient.trim());
-
-      dishes = await knex('dishes_ingredients')
-        .select([
-          'dishes.*'
-        ])
-        .innerJoin('dishes', 'dishes.id', 'dishes_ingredients.dish_id')
-        .innerJoin('ingredients', 'ingredients.id', 'dishes_ingredients.ingredient_id')
-        .whereIn('ingredients.name', filteredIngredients)
-        .orderBy('dishes.name', 'asc');         
-
-    } else {
-
-      dishes = await knex('dishes')
-        .select()
-        .whereLike('name', `%${nameTrimmed}%`)
-        .orderBy([
-          {column: 'category_id', nulls: 'last'}
-        ]);
-    }
-
-    const dishesIds = dishes.map(({ id }) => id);
-
-    const dishIngredients = await knex('dishes_ingredients')
-      .select([
-        'dishes.id as dish_id',
-        'ingredients.*'
-      ])
-      .innerJoin('ingredients', 'ingredients.id', 'dishes_ingredients.ingredient_id')
-      .innerJoin('dishes', 'dishes.id', 'dishes_ingredients.dish_id')
-      .whereIn('dish_id', dishesIds)
-      .orderBy('dishes.id'); 
-
-    const dishesWithIngredients = dishes.map(dish => {
-      const ingredientsOfDish = dishIngredients.filter(ingredient => ingredient.dish_id === dish.id);
-
-      return {
-        ...dish,
-        ingredients: ingredientsOfDish
-      }
-    });
-
-    return response.json(dishesWithIngredients);
   }
 
   async delete(request, response) {

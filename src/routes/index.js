@@ -18,6 +18,8 @@ const statusesRoutes = require('./statuses.routes');
 
 const ordersRoutes = require('./orders.routes');
 
+const all_ordersRoutes = require('./all_orders.routes');
+
 const routes = Router();
 
 routes.use("/users", usersRoutes);
@@ -37,5 +39,7 @@ routes.use('/ingredients', ingredientsRoutes);
 routes.use('/statuses', statusesRoutes);
 
 routes.use('/orders', ordersRoutes);
+
+routes.use('/all_orders', all_ordersRoutes);
 
 module.exports = routes;

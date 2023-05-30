@@ -9,8 +9,6 @@ class OrdersController {
     const user_id = request.user.id;
 
     async.mapSeries(request.body, function iterator(data, callback) { 
-      
-      console.log(data);
 
       return callback(null, data);      
       
@@ -28,8 +26,6 @@ class OrdersController {
         const reqDishesIDs = reqDishes.map(({ dish_id }) => dish_id);
 
         const reqQuantities = reqDishes.map(({ quantity }) => quantity);
-        
-        //console.log('reqDishes', reqDishes,'=', reqDishesIDs, 'AND', reqQuantities);
 
         const existDishes = await knex('dishes').whereIn('id', reqDishesIDs);
   
@@ -37,25 +33,15 @@ class OrdersController {
   
         const noneExistDishes = reqDishesIDs.filter(dish => !existDishesIDs.includes(dish));
         
-        // console.log( existDishesIDs, `->`, reqDishes, `=`, noneExistDishes);
-        
         if(noneExistDishes.length > 0) {
           throw new AppError(`O(s) prato(s) de ID(s): ${noneExistDishes.join(', ')}, não estão cadastrados`);
         }
 
         const [newOrder] = await knex('orders').insert({ user_id })
-          .returning(['id']); 
-          
-        //console.log(newOrder, '->', newOrder.id); 
+          .returning(['id']);
         
         for(let i = 0; i < reqDishes.length; i++) {
 
-          /* console.log('Para inserir ->', {
-
-            order_id: newOrder.id,
-            dish_id: reqDishesIDs[i],
-            quantity: reqQuantities[i]
-          }) */
           await knex('dishes_orders').insert(
             {  
               order_id: newOrder.id,
@@ -74,8 +60,6 @@ class OrdersController {
 
       } catch (error) {
 
-        //console.log(error);
-
         return response.status(400).json(error);
       
       }
@@ -84,18 +68,63 @@ class OrdersController {
     
   }
 
+  async index(request, response) {
+    const user_id = request.user.id;
+
+    const ordersOfThisUser = await knex('orders_statuses')
+      .select([
+        'orders.id as order_id',
+        'created_at',
+        'status_id',
+        'statuses.value as status',
+      ])
+      .where({ user_id })
+      .innerJoin('orders', 'orders.id', 'orders_statuses.order_id')
+      .innerJoin('statuses', 'statuses.id', 'orders_statuses.status_id')
+      .orderBy('status_id', 'asc');
+      
+    const dishesOfThisUser = await knex('dishes_orders')
+      .select([
+        'order_id',
+        'dish_id',
+        'dishes.name',
+        'quantity'
+      ])
+      .innerJoin('dishes', 'dishes.id', 'dishes_orders.dish_id')
+      .innerJoin('orders', 'order_id', 'dishes_orders.order_id')
+      .groupBy('dishes_orders.order_id', 'dishes_orders.dish_id')
+    
+    const ordersWithDishes = ordersOfThisUser.map(order => {
+
+      const dishesOfThisOrder = dishesOfThisUser.filter(dish => dish.order_id === order.order_id);
+
+      return {
+        ...order,
+        dishes: dishesOfThisOrder
+      }
+    });      
+
+    return response.json(ordersWithDishes);
+    
+  }
+
   async show(request, response) {
+
+    const user_id = request.user.id;
 
     const { id } = request.params; 
 
-    const [orderUserAndDate] = await knex('orders').where({ id });
+    const [orderUserAndDate] = await knex('orders').where({ id, user_id });
+
+    if(!orderUserAndDate || orderUserAndDate.length === 0) {
+      throw new AppError('Pedido não encontrado.');
+    }
 
     const orderDishes = await knex('dishes_orders')
       .select([
         'dish_id',
         'quantity',
-        'price',
-        'orders.created_at as order_request'
+        'price'
       ])
       .where({ order_id: id })
       .innerJoin('dishes', 'dishes.id', 'dishes_orders.dish_id')
@@ -111,11 +140,11 @@ class OrdersController {
       .innerJoin('orders', 'orders.id', 'dishes_orders.order_id')
 
     return response.json({
-      ...orderUserAndDate, orderDishes, orderTotal
+      ...orderUserAndDate, 
+      orderDishes, 
+      orderTotal
     });
   }
-
-  // AQUI!!!
 
   async update(request, response) {
 
@@ -148,8 +177,6 @@ class OrdersController {
 
         const noneExistDishes = newReqDishesIDs.filter(dish => !existDishesIDs.includes(dish));
 
-        console.log(orderToUpdate, 'X', newReqDishes,'/', existDishesIDs, '->', noneExistDishes);
-
         if(noneExistDishes.length > 0) {
           throw new AppError(`O(s) prato(s): ${noneExistDishes.join(', ')}, não estão cadastrados.`)
         }
@@ -174,15 +201,10 @@ class OrdersController {
         return response.status(201).json('Pedido atualizado com sucesso')
 
       } catch (error) {
-        //console.log(error);
 
         return response.status(400).json(error);
       }
     }); 
-  }
-
-  async index(request, response) {
-    
   }
 
   async delete(request, response) {

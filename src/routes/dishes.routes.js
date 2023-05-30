@@ -20,11 +20,11 @@ dishesRoutes.use(ensureAuthenticated);
 
 dishesRoutes.post('/', ensureUserRoles(['ROLE_ADMIN']),  upload.single('picture'), dishesController.create);
 
-dishesRoutes.put('/:id', ensureUserRoles(['ROLE_ADMIN']), upload.single('picture'),dishesController.update)
+dishesRoutes.get('/', dishesController.index);
 
 dishesRoutes.get('/:id', dishesController.show);
 
-dishesRoutes.get('/', dishesController.index);
+dishesRoutes.put('/:id', ensureUserRoles(['ROLE_ADMIN']), upload.single('picture'),dishesController.update);
 
 dishesRoutes.delete('/:id', ensureUserRoles(['ROLE_ADMIN']), dishesController.delete);
 
