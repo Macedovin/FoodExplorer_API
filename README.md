@@ -8,7 +8,7 @@
 
 <br/>
 
-# Food Explorer
+# Food Explorer API
 
 <br/>
 
@@ -36,9 +36,9 @@ Project developed as a result of the teachings learned at Rocketseat's program E
 
 A Backend API using JavaScript and NodeJS that allows you to sign up and sign in as a default user as well as sign in as administrator.
 
-As the first persona you will be able to edit your profile, see all the registered dishes, add them to favorites, checking and editing this list after, see it details by clicking them, add as many itens as you want to the shopping cart, see your current and previous orders and do the checkout.
+As the first persona you will be able to edit your profile, see all the registered dishes, add them to favorites, checking and editing this list after, see it details by clicking them, add as many itens as you want to the shopping cart and see your current and previous orders.
 
-As the second persona you will be able to create, see /read, edit and delete (CRUD) any dishes at any time, add them to favorites, checking and edit this list after, see and control all and each one of the requests and its , as well as see all the users and assign them to administrator role as needed and wanted.
+As the second persona you will be able to create, see/ read, edit and delete (CRUD) any dishes at any time, add them to favorites, checking and edit this list after, see and control all and each one of the requests and its statuses, as well as see all the users and assign them to administrator role as needed and wanted.
 
 ## Preview
 
@@ -82,23 +82,16 @@ As the second persona you will be able to create, see /read, edit and delete (CR
 
 ## Utilization
 
-- [initializing the application](#initializing-the-application)
+- [Initializing the application](#initializaing-the-application)
 - [Using the resources](#using-the-resources)
-  - [Users roles](#users-roles)
-	- [Usuários](#usuários)
-    - [Criar](#criar-um-usuário)
-    - [Atualizar](#atualizar-um-usuário)
-    - [Atualizar o Avatar](#atualizar-o-avatar-de-um-usuário)
-  - [Seções](#seções)
-    - [Criar](#criar-uma-seção)
-  - [Notas](#notas)
-    - [Criar](#criar-uma-nota)
-    - [Atualizar](#atualizar-uma-nota)
-    - [Excluir](#excluir-uma-nota)
-    - [Mostrar Especifica](#mostrar-uma-nota)
-    - [Mostrar Várias](#mostrar-várias-notas)
-  - [Arquivos](#arquivos)
-    - [Mostrar](#mostrar-um-arquivo)
+	- [Users roles](#users-roles)
+		- [Create roles](#green_circle-post-roles)
+		- [Create users](#green_circle-post-users)
+	- [Users](#users)
+		- [Update users](#orange_circle-put-users)
+
+:badger:
+
 
 ---
 
@@ -140,13 +133,13 @@ To view that application functioning follow along the next steps:
 
 - #### **Users roles**
 
-	#### 🟢 **POST /roles**	
+	#### :green_circle: **POST/ roles**  
 
 	**Description:** Create a role 
 
-	First of all, create useful roles for the establishment. For now, this API is handling tow personas: _administrator_ and _default user_. To create a role, send a request at URL:
+		First of all, create useful roles for the establishment. For now, this API is handling tow personas: _administrator_ and _default user_. To create a role, send a request at URL:
 
-	 `http://localhost:3333/roles`
+		`http://localhost:3333/roles`
 
 	**ATTENTION**:
 
@@ -179,10 +172,10 @@ To view that application functioning follow along the next steps:
 	}
 	```
 
-	#### 🟢 **POST /users**
+	#### :green_circle: **POST/ users**
 
 	**Description:** Create a user
-
+	
 	Second step is create two specific first users: 
 
 	- "Administrator
@@ -262,3 +255,19 @@ To view that application functioning follow along the next steps:
 		}
 	]
 	```
+- #### **Users**
+
+	#### :orange_circle: **PUT/ users**
+
+	**Description:**  Update a user
+	
+
+
+
+	🔵 **GET/ users_roles**
+
+	**Description:** Show a user
+
+	Access and verify the roles of an authenticated user. URL for this:
+
+	`http://localhost:3333/roles`
