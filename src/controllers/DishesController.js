@@ -153,7 +153,17 @@ class DishesController {
         .orderBy([
           {column: 'category_id', nulls: 'last'}
         ]);
-    }
+
+    }     
+
+    const dishCategories = await knex('dish_categories')
+      .select([
+        'dish_categories.id as category_id',
+        'dish_categories.name as category_name',
+      ])
+      .innerJoin('dishes', 'dishes.category_id', 'dish_categories.id') 
+      .groupBy('dish_categories.name')
+      .orderBy('dish_categories.id');
 
     const dishesIds = dishes.map(({ id }) => id);
 
@@ -167,16 +177,30 @@ class DishesController {
       .whereIn('dish_id', dishesIds)
       .orderBy('dishes.id'); 
 
-    const dishesWithIngredients = dishes.map(dish => {
-      const ingredientsOfDish = dishIngredients.filter(ingredient => ingredient.dish_id === dish.id);
+      const dishesWithIngredients = dishes.map(dish => {
+        const ingredientsOfDish = dishIngredients.filter(ingredient => ingredient.dish_id === dish.id);
+  
+        return {
+          ...dish,
+          ingredients: ingredientsOfDish,
+          
+        }
+      });  
 
-      return {
-        ...dish,
-        ingredients: ingredientsOfDish
-      }
-    });
+      const dishesInCategories = dishCategories.map(category => {
+        
+        const dishesOfCategory = dishesWithIngredients.filter(dish => dish.category_id === category.category_id);
 
-    return response.json(dishesWithIngredients);
+        return {
+          ...category,
+          dishes: dishesOfCategory,
+        }
+      });
+
+
+
+
+    return response.json({dishesInCategories});
   }
 
   async show(request, response) {
