@@ -14,11 +14,13 @@ const dishesRoutes = require('./dishes.routes');
 
 const ingredientsRoutes = require('./ingredients.routes');
 
-const statusesRoutes = require('./statuses.routes');
+const favoritesRoutes = require('./favorites.routes');
 
 const ordersRoutes = require('./orders.routes');
 
 const all_ordersRoutes = require('./all_orders.routes');
+
+const statusesRoutes = require('./statuses.routes');
 
 const routes = Router();
 
@@ -36,10 +38,12 @@ routes.use('/dishes', dishesRoutes);
 
 routes.use('/ingredients', ingredientsRoutes);
 
-routes.use('/statuses', statusesRoutes);
+routes.use('/favorites', favoritesRoutes);
 
 routes.use('/orders', ordersRoutes);
 
 routes.use('/all_orders', all_ordersRoutes);
+
+routes.use('/statuses', statusesRoutes);
 
 module.exports = routes;
