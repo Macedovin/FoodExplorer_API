@@ -117,65 +117,59 @@ class DishesController {
 
     return response.status(201).json([
       {
-        ...newDish
-      },
-      {
+        ...newDish,
         message: 'Prato cadastrado com sucesso.'
       }
     ]);    
   }
 
   async index (request, response) {
-    const { name, ingredients } = request.query;
-
-    const nameTrimmed = name.trim();
+    const { search } = request.query;
 
     let dishes;
-
-    if (ingredients) {
-
-      const filteredIngredients = ingredients.split(',').map(ingredient => ingredient.trim());
-
+        
+    if (search) {
+      
       dishes = await knex('dishes_ingredients')
-        .select([
-          'dishes.*'
-        ])
+      .select([
+        'dishes.*'
+      ])
         .innerJoin('dishes', 'dishes.id', 'dishes_ingredients.dish_id')
         .innerJoin('ingredients', 'ingredients.id', 'dishes_ingredients.ingredient_id')
-        .whereIn('ingredients.name', filteredIngredients)
-        .orderBy('dishes.name', 'asc');         
+        .whereLike('dishes.name', `%${search}%`)
+        .orWhereLike('ingredients.name', `%${search}%`) 
+        .groupBy('dishes.name')
+        .orderBy('dishes.name', 'asc'); 
 
     } else {
-
+  
       dishes = await knex('dishes')
-        .select()
-        .whereLike('name', `%${nameTrimmed}%`)
-        .orderBy([
-          {column: 'category_id', nulls: 'last'}
-        ]);
-
-    }     
+      .select()
+      .orderBy([
+        {column: 'category_id', nulls: 'last'}
+      ]); 
+    }
 
     const dishCategories = await knex('dish_categories')
-      .select([
-        'dish_categories.id as category_id',
-        'dish_categories.name as category_name',
-      ])
-      .innerJoin('dishes', 'dishes.category_id', 'dish_categories.id') 
-      .groupBy('dish_categories.name')
-      .orderBy('dish_categories.id');
-
+    .select([
+      'dish_categories.id as category_id',
+      'dish_categories.name as category_name',
+    ])
+    .innerJoin('dishes', 'dishes.category_id', 'dish_categories.id') 
+    .groupBy('dish_categories.name')
+    .orderBy('dish_categories.id');      
+      
     const dishesIds = dishes.map(({ id }) => id);
-
+    
     const dishIngredients = await knex('dishes_ingredients')
       .select([
         'dishes.id as dish_id',
         'ingredients.*'
       ])
-      .innerJoin('ingredients', 'ingredients.id', 'dishes_ingredients.ingredient_id')
-      .innerJoin('dishes', 'dishes.id', 'dishes_ingredients.dish_id')
-      .whereIn('dish_id', dishesIds)
-      .orderBy('dishes.id'); 
+        .innerJoin('ingredients', 'ingredients.id', 'dishes_ingredients.ingredient_id')
+        .innerJoin('dishes', 'dishes.id', 'dishes_ingredients.dish_id')
+        .whereIn('dish_id', dishesIds)
+        .orderBy('dishes.id'); 
 
       const dishesWithIngredients = dishes.map(dish => {
         const ingredientsOfDish = dishIngredients.filter(ingredient => ingredient.dish_id === dish.id);
@@ -183,9 +177,8 @@ class DishesController {
         return {
           ...dish,
           ingredients: ingredientsOfDish,
-          
         }
-      });  
+      });
 
       const dishesInCategories = dishCategories.map(category => {
         
@@ -197,16 +190,25 @@ class DishesController {
         }
       });
 
-
-
-
-    return response.json({dishesInCategories});
+    return response.json(dishesInCategories);
   }
 
   async show(request, response) {
     const { id }= request.params;
 
-    const [dishDetails] = await knex('dishes').where({ id });
+    const [dishDetails] = await knex('dishes')
+      .select([
+        'dishes.category_id',
+        'dish_categories.name as category_name',
+        'dishes.id as dish_id',
+        'dishes.name as dish_name',
+        'dishes.picture',
+        'dishes.price',
+        'dishes.description'
+      ])
+      .innerJoin('dish_categories', 'dish_categories.id', 'dishes.category_id') 
+      .where({ dish_id: id })
+
       
     const dishIngredients = await knex('dishes_ingredients')
       .select([
@@ -378,11 +380,11 @@ class DishesController {
           }
         ]);
       
-  } else {
+    } else {
 
-    throw new AppError('Pelo menos um novo dado deve ser inserido para que seja efetuada a atualização');
+      throw new AppError('Pelo menos um novo dado deve ser inserido para que seja efetuada a atualização');
 
-  }
+    }
   }
 
   async delete(request, response) {
@@ -392,7 +394,7 @@ class DishesController {
     
     return response.json({
       message: 'Prato excluído com sucesso.'
-    })
+    });
   }
 }
 
