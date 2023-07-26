@@ -37,13 +37,15 @@ class SessionsController {
         subject: String(checkedUser.id),
         expiresIn
       }
-    )
+    );
 
     return response.json({ 
-      id: checkedUser.id,
-      name: checkedUser.name,
-      email: checkedUser.email,
-      avatar: checkedUser.avatar,
+      user: {     
+        id: checkedUser.id,
+        name: checkedUser.name,
+        email: checkedUser.email,
+        avatar: checkedUser.avatar,
+      },
       token 
     });
   }

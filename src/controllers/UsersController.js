@@ -8,6 +8,10 @@ class UsersController {
   async create(request, response) {
     const { name, email, password, roles } = request.body;
     
+    if(!name || !email || !password) {
+      throw new AppError('Todos os dados devem ser preenchidos para efetuar o cadastro.');
+    }   
+
     const emailInUse = await knex('users').where({ email }).first();
     
     if (emailInUse) {
@@ -107,6 +111,10 @@ class UsersController {
       throw new AppError('Você precisa informar a senha antiga para definir uma nova senha.');
     }
 
+    if (!new_password && current_password) {      
+      throw new AppError('Você não precisa informar a senha antiga se não for definir uma nova.');
+    }
+
     if (new_password && current_password) {
 
       const oldPasswordCheck = await compare(current_password, userInfos.password);
@@ -133,7 +141,7 @@ class UsersController {
     return response.status(201).json({
       updatedUser,
       message: 'Os dados foram atualizados com sucesso.'
-    })
+    });
   }
 
   async show(request, response) {

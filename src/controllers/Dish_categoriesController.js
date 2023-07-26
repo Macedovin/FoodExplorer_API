@@ -19,7 +19,8 @@ class Dish_categoriesController {
     .returning(['id', 'name']);
 
     return response.status(201).json({
-      message: 'Categoria cadastrada com sucesso.'
+      category,
+      message: 'Categoria cadastrada com sucesso.' 
     });
 
   }
