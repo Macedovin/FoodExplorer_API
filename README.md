@@ -59,6 +59,8 @@ As the second persona you will be able to create, see/ read, edit and delete (CR
 	<img align="center" height="40" width="40" src="https://raw.githubusercontent.com/caolan/async/086485292d80225ba3a22976b92831612e3e2373/logo/async-logo.svg" alt="Macedovin-Async" />
 	<img align="center" height="40" width="100" src="./README-assets/jwtio-json-web-token.svg" alt="Macedovin-JSON Web Token" />	
 	<img align="center" height="30" width="80" src="./README-assets/Bcryptjs.png" alt="Macedovin-BcryptJS" />
+	<img align="center" height="30" width="80" src="https://raw.githubusercontent.com/Unitech/pm2/master/pres/pm2-v4.png" alt="Macedovin-PM2" />
+	<img align="center" height="20" width="70" src="./README-assets/Lucid_chart-logo.png" alt="Macedovin-Lucid Chart" />
 </div>
 
 ## Functionalities
