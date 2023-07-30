@@ -59,13 +59,13 @@ class FavoritesController {
     const user_id = request.user.id;
     const { dish_id } = request.params;
     
-    const favoriteToDelete = await knex('favorites').where({ dish_id }).first();
+    const favoriteToDelete = await knex('favorites').where({ user_id, dish_id }).first();
 
     if(!favoriteToDelete) {
       throw new AppError('Prato não encontrado e/ ou prato não favoritado.');
     }
 
-    await knex('favorites').where({ dish_id: favoriteToDelete.dish_id }).delete();
+    await knex('favorites').where({ id: favoriteToDelete.id }).delete();
 
     return response.json({
       message: 'Favorito excluído com sucesso.'
