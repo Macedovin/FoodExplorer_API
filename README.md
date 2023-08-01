@@ -96,7 +96,7 @@ The image below shows the database model used:
 		- [Create roles](#green_circle-post-roles)
 		- [Create users](#green_circle-post-users)
 		- [List/ Index all roles](#large_blue_circle-get-users_roles)
-		- [Update users roles](#orange_circle-put-users_rolesid)
+		- [Update users roles](#yellow_circle-patch-users_rolesid)
 	- [Users](#users)
 		- [Update users](#orange_circle-put-users)
 		- [Update avatar](#yellow_circle-patch-usersavatar)
@@ -259,7 +259,7 @@ To view that application functioning follow along the next steps:
 
 	- "Administrator
 
-		> Will manage and can access the hole API having both roles/ personas;
+		> Will manage and be able to access the hole API having both roles/ personas;
 
 	- "User"
 		
@@ -271,9 +271,9 @@ To view that application functioning follow along the next steps:
 
 	**ATTENTION**:
 
-	> As security, encrypt Administrator password, is advised, using the tool of your choice (MD5HASH can be the one). Save it for security and future accesses.
+	> As a security, it is advisable to encrypt the admin password, using the tool of your choice (might be MD5HASH). Save it for security and future access.
 
-	> All users created without "roles" sended within request will be assigned as _"default users"_. 
+	> All users created without "roles" sended within request will be assigned as "__*users/ default *__". 
 
 	**Requests**
 
@@ -414,7 +414,7 @@ To view that application functioning follow along the next steps:
 	]
 	``` 
 
-	#### :orange_circle: **PUT/ users_roles/:id**
+	#### :yellow_circle: **PATCH/ users_roles/:id**
 
 	**Description:** Update any user's roles
 
@@ -474,12 +474,14 @@ To view that application functioning follow along the next steps:
 		"updatedUser": {
 			"name": "Updated name",
 			"email": "new@email.com",
-			"avatar": null || "6e46f9e07b5dfc170784-Avatar-file-name.ext",
+			"avatar": null,
 			"updated_at": "2023-06-30 21:37:36"
 		},
 		"message": "Os dados foram atualizados com sucesso."
 	}
 	```
+	
+	> By default the user avatar field is __*null*__ as the user can be created without an avatar.
 	
 	> ext === extension
 	
@@ -489,13 +491,17 @@ To view that application functioning follow along the next steps:
 
 	Any user can update your own avatar image file.
 
-	To achieve this send the chosen image file inside a form in a field called "__*avatar*__" to the URL bellow:
+	To achieve this send a request to the URL bellow:
 
 	`http://localhost:3333/users/avatar`
 
 	**ATTENTION**:
 
 	> By default the user avatar field is __*null*__ as the user can be created without an avatar.
+
+	**Request**
+
+		> Send the chosen image file inside a form (new FormData( )) appended in a field called "avatar".
 
 	**Response**
 
@@ -553,7 +559,9 @@ To view that application functioning follow along the next steps:
 		
 	**Description:** Create categories to group dishes
 
-	All dishes created needs to be attached to a category. 
+	All dishes created must be attached to a category. 
+
+	They can be created together with a new dish, or alone, depending on demand.   
 
 	In order to create a category send a request to the URL bellow:
 
@@ -627,9 +635,9 @@ To view that application functioning follow along the next steps:
 
 	**Description:** Delete a specific category
 
-	In order to delete an existing category a request must be sended at the URL:
+	In order to delete an existing category a request must be sended to the URL:
 
-	`http://localhost:3333/categories`
+	`http://localhost:3333/categories/:id`
 
 	**ATTENTION**:
 
@@ -653,39 +661,41 @@ To view that application functioning follow along the next steps:
 	
 	**Description:** Create dishes
 	 
-	To achieve the creation of a dish, inside a form 	send a request at the URL:
+	To achieve the creation of a dish, inside a form ("__*new FormData( )*__"),	send a request at the URL:
 
 	`http://localhost:3333/dishes`
 
-	The mentioned form can contain only one or both of two fields: 
+	The mentioned form must contains two fields: 
 
-	- "__*data*__": which has the necessary fields that composes a dish; 
-	- "__*picture*__": which has the image file; 
+	- "__*data*__" -> which has the necessary fields that composes a dish; 
+	- "__*picture*__" -> which has the image file; 
 
 	**ATTENTION**:
 
 	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
 
-	**Request**
+	> By default the dish picture field is __*null*__ as a dish can be created without a picture.
+
+	**Requests**
 
 	```json
-	data: {
-		"name": "Colorful salad",	
-		"description": "A salad description.",
-		"price": 26.70,
-		"category_id": 1,
-		"ingredients": [ 
-			"lettuce",
-			"tomato",
-			"radish"
-		]
-	},
-	picture: null || "Your-dish-picture-file_name.ext"
+	{
+		"data": {
+			"name": "Colorful salad",	
+			"description": "A salad description.",
+			"price": 26.70,
+			"category_id": 1,
+			"ingredients": [ 
+				"lettuce",
+				"tomato",
+				"radish"
+			]
+		},
+		"picture": null
+	}
 	```
 	
 	**Response**
-
-	If everything goes fine, the response will be something like this:
 
 	```json
 	[
@@ -694,7 +704,7 @@ To view that application functioning follow along the next steps:
 			"name": "Colorful salad",	
 			"description": "A salad description.",
 			"price": 26.70,
-			"picture": null || "d4c43e6410d3df10f8d8-Your-dish-picture-file_name.ext",
+			"picture": null,
 			"category_id": 1,
 			"created_at": "2023-07-31 03:39:42",
 		},
@@ -705,51 +715,486 @@ To view that application functioning follow along the next steps:
 	```
 
 	> 1 -> The ID number of the created dish 
-	
+
 	> ext === extension
 
-	#### :orange_circle: **PUT/ dishes/:id**
-
-	**Description:** Update dishes
-		
 	#### :large_blue_circle: **GET/ dishes**
 
 	**Description:** List/ Index all dishes
+	
+	To see/ show all existing dishes in the application send a request to the URL bellow:  
+
+	`http://localhost:3333/dishes`
+
+	**Requests**
+
+		> These requests don't need body parameters.
+
+	**Response**
+
+	Request being successful the response will be something like this:
+
+	```json
+	[
+		{
+			"category_id": 1,
+			"category_name": "Meals",
+			"dishes": [
+				{
+					"id": 1,
+					"name": "First meal",
+					"description": "Dish description.",
+					"picture": "84640a87b0217aa5f28a-Prato_1.png",
+					"price": 25.99,
+					"category_id": 1,
+					"created_at": "2023-05-26 14:06:31",
+					"updated_at": "2023-07-21 21:32:11",
+					"ingredients": [
+						{
+							"dish_id": 1,
+							"id": 1,
+							"name": "rice"
+						},
+						{
+							"dish_id": 1,
+							"id": 2,
+							"name": "beans"
+						},
+						{
+							"dish_id": 1,
+							"id": 28,
+							"name": "french fries"
+						}
+					]
+				},
+				{
+					"id": 2,
+					"name": "Second meal",
+					"description": "Dish description.",
+					"picture": null,
+					"price": 52.9,
+					"category_id": 1,
+					"created_at": "2023-05-26 14:07:14",
+					"updated_at": "2023-05-26 14:07:14",
+					"ingredients": [
+						{
+							"dish_id": 2,
+							"id": 1,
+							"name": "rice"
+						},
+						{
+							"dish_id": 2,
+							"id": 2,
+							"name": "beans"
+						},
+						{
+							"dish_id": 2,
+							"id": 7,
+							"name": "cassava"
+						}
+					]
+				},
+				{
+					"id": 5,
+					"name": "Third meal",
+					"description": "Dish description.",
+					"picture": "ab08e5efb3b7848f4cfc-Badge.svg",
+					"price": 9.99,
+					"category_id": 1,
+					"created_at": "2023-07-20 18:23:02",
+					"updated_at": "2023-07-21 21:37:48",
+					"ingredients": [
+						{
+							"dish_id": 21,
+							"id": 26,
+							"name": "steak"
+						},
+						{
+							"dish_id": 21,
+							"id": 28,
+							"name": "french fries"
+						}
+					]
+				}
+			]
+		},
+		{
+			"category_id": 2,
+			"category_name": "Beverages",
+			"dishes": [
+				{
+					"id": 3,
+					"name": "First beverage",
+					"description": "Beverage description.",
+					"picture": null,
+					"price": 2.9,
+					"category_id": 2,
+					"created_at": "2023-05-26 14:09:04",
+					"updated_at": "2023-05-26 14:09:04",
+					"ingredients": [
+						{
+							"dish_id": 3,
+							"id": 4,
+							"name": "water"
+						}
+					]
+				},
+				{
+					"id": 6,
+					"name": "Second beverage",
+					"description": "Beverage description.",
+					"picture": "e8a7164f72c6155b94b4-Prato_2.png",
+					"price": 12.99,
+					"category_id": 2,
+					"created_at": "2023-05-26 14:09:38",
+					"updated_at": "2023-05-26 14:09:38",
+					"ingredients": [
+						{
+							"dish_id": 4,
+							"id": 4,
+							"name": "water"
+						},
+						{
+							"dish_id": 4,
+							"id": 5,
+							"name": "tea"
+						}
+					]
+				}
+			]
+		},
+		{
+			"category_id": 3,
+			"category_name": "Desserts",
+			"dishes": [
+				{
+					"id": 4,
+					"name": "First dessert",
+					"description": "Dessert description.",
+					"picture": "d2678453d443d27d2b5e-doce.png",
+					"price": 23.75,
+					"category_id": 3,
+					"created_at": "2023-05-26 14:14:33",
+					"updated_at": "2023-07-21 21:36:36",
+					"ingredients": [
+						{
+							"dish_id": 6,
+							"id": 10,
+							"name": "sugar"
+						},
+						{
+							"dish_id": 6,
+							"id": 8,
+							"name": "dough"
+						},
+						{
+							"dish_id": 6,
+							"id": 29,
+							"name": "almonds"
+						}
+					]
+				}
+			]
+		}			
+	]
+	```
 		
 	#### :large_blue_circle: **GET/ dishes/:id**
 
 	**Description:** Show a specific dish
-		
+
+	In order to access/ see an specific dish a request must be sended to the URL bellow:  
+
+	`http://localhost:3333/dishes/:id`
+
+	**Requests**
+
+		> These requests don't need body parameters.
+
+	**Response**
+
+	All doing well, the response will be something like this:	
+
+	```json
+	{
+		"category_id": 6,
+		"category_name": "Burgers",
+		"dish_id": 21,
+		"dish_name": "Burger description",
+		"picture": "84640a87b0217aa5f28a-Prato_1.png",
+		"price": 25.99,
+		"description": "Primeiro prato.",
+		"dishIngredients": [
+			{
+				"id": 21,
+				"name": "steak"
+			},
+			{
+				"id": 28,
+				"name": "french fries"
+			},
+			{
+				"id": 11,
+				"name": "cheese"
+			},
+			{
+				"id": 16,
+				"name": "ham"
+			}
+		]
+	}
+	```
+
+	#### :orange_circle: **PUT/ dishes/:id**
+
+	**Description:** Update dishes
+
+	All dishes data can be updated at any time. Change only one data or all at once.
+
+	To achieve this, inside a form ("__*new FormData( )*__"), send a request at the URL:
+
+	`http://localhost:3333/dishes/:id`
+
+	The mentioned form must contains two fields: 
+
+	- "__*data*__" -> which has the necessary fields that composes a dish; 
+	- "__*picture*__" -> which has the image file; 
+
+	**ATTENTION**:
+
+	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
+
+	> By default the dish picture field is __*null*__ as a dish can be created without a picture.
+
+	**Requests**
+
+	```json
+	{
+		"data": {
+			"new_name": "New colorful salad",	
+			"new_description": "A new salad description.",
+			"new_price": 37.60,
+			"new_category_id": 4,
+			"new_ingredients": [ 
+				"broccoli",
+				"carrot"			
+			]
+		},
+		"picture": "Your-dish-picture-file_name.ext"
+	}
+	```
+	
+	**Response**
+
+	If everything goes fine, the response will be something like this:
+
+	```json
+	[
+		{
+			"updatedDish": {
+				"id": 1,
+				"name": "New colorful salad",	
+				"description": "A new salad description.",
+				"price": 37.60,
+				"picture": "d4c43e6410d3df10f8d8-Your-dish-picture-file_name.ext",
+				"category_id": 4,
+				"created_at": "2023-05-26 14:09:38",
+				"updated_at": "2023-08-01 11:33:42"
+			},
+			"newDishIngredients": [
+				{
+					"id": 22,
+					"name": "broccoli"
+				},
+				{
+					"id": 31,
+					"name": "carrot"
+				}
+			]
+		},
+		{
+			"message": "Prato cadastrado com sucesso."
+		}		
+	]
+	```
+
+	> ext === extension
+
 	#### :red_circle: **DELETE/ dishes/:id**
 
 	**Description:** Delete a specific dish
 	
+	Existing and registered dishes can be deleted at any time. 
 
+	In order to delete an existing dish a request using the **DELETE** method must be sended to the URL bellow:
+
+	`http://localhost:3333/dishes/:id`
+
+	**ATTENTION**:
+
+	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
+
+	**Requests**
+
+		> These requests don't need body parameters.
+
+	**Response**
+
+	```json
+	{
+		"message": "Prato excluído com sucesso."
+	}
+	```
 	
 - #### **Ingredients**
 
 	#### :green_circle: **POST/ ingredients**
 	
 	**Description:** Create ingredients
-	
+
+	All dishes created must contain at least one ingredient that composes it.
+
+	They can be created together with a new dish, or alone, depending on demand.  
+
+	To create a new standalone ingredient, send a request at the URL: 
+
+	`http://localhost:3333/ingredients`
+
+
+	**ATTENTION**:
+
+	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
+
+	**Requests** 
+
+	```json
+	{
+		"name": "potato"
+	}
+	```
+
+	**Response**
+
+	```json
+	{
+		"message": "Ingrediente cadastrado com sucesso."
+	}
+	```
+
 	#### :red_circle: **DELETE/ ingredients/:id** 
 	
 	**Description:** Delete specific ingredients
 	
+	Existing and registered ingredients can be deleted at any time. 
+
+	In order to delete an ingredient a request must be sended to the URL bellow:
+
+	`http://localhost:3333/ingredients/:id`
+
+	**ATTENTION**:
+
+	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
+
+	**Requests**
+
+		> These requests don't need body parameters.
+
+	**Response**
+
+	```json
+	{
+		"message": "Ingrediente excluído com sucesso."
+	}
+	```
+
 - #### Favorites
 
 	#### :green_circle: **POST/ favorites/:dish_id**
 		
 	**Description:** Create favorites
-	
+
+	All dishes in application can be set as favorite by any registered user (regardless the roles it has).
+
+	To set a dish as favorite send a request to the URL bellow:
+
+	`http://localhost:3333/favorites/:dish_id`
+
+	**Requests**
+
+		> These requests don't need body parameters.
+
+	**Response**
+
+	```json
+	[
+		{
+			"favorited": 46
+		},
+		{
+			"message": "Prato favoritado com sucesso."
+		}
+	]
+	```
+
 	#### :large_blue_circle: **GET/ favorites
 	
 	**Description:** List/ Index all favorites dishes of an user
+
+	To see all dishes in the application that a registered user has set as favorite send a request to the URL bellow:
+
+	`http://localhost:3333/favorites`
+	
+	**Requests**
+
+		> These requests don't need body parameters.
+
+	**Response**
+
+	Everything going fine, response will be something like this:
+
+	```json
+	[
+		{
+			"favorite_id": 1,
+			"user_id": 2,
+			"dish_id": 5,
+			"name": "Third beverage",
+			"picture": "ac4911ab4f1f2f19c1eb-Dish-picture-name.ext"
+		},
+		{
+			"favorite_id": 4,
+			"user_id": 2,
+			"dish_id": 16,
+			"name": "Fifth meal",
+			"picture": null
+		}
+	]
+	```
+
+	> ext === extension
 	
 	#### :red_circle: **DELETE/ favorites/:dish_id**
 	
 	**Description:** Delete favorites of an user
 
+	Registered users can remove from favorites any dish once favorited by them. 
+
+	In order to delete a dish from a user's favorites list, send a request using the **DELETE** method to the URL bellow:
+
+	`http://localhost:3333/favorites/:dish_id`
+
+	**Requests**
+
+		> These requests don't need body parameters.
+
+	**Response**
+
+	```json
+	{
+		"message": "Favorito excluído com sucesso."
+	}
+	```
+	
 - #### **Orders**
 
 	#### :green_circle: **POST/ orders**

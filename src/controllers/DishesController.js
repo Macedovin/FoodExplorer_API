@@ -23,9 +23,9 @@ class DishesController {
       throw new AppError('Nome de prato já cadastrado.');
     } 
     
-    const priceIsNotPositiveFloatNumber = isNaN(price) || price <= 0 || Number.isInteger(price);
+    const priceIsNotPositiveNumber = isNaN(price) || price <= 0;
 
-    if (priceIsNotPositiveFloatNumber) {
+    if (priceIsNotPositiveNumber) {
       
       throw new AppError('O preço do prato deve ser um número decimal maior do que zero.');
 
@@ -118,6 +118,8 @@ class DishesController {
     return response.status(201).json([
       {
         ...newDish,
+      },
+      {
         message: 'Prato cadastrado com sucesso.'
       }
     ]);    
@@ -262,9 +264,9 @@ class DishesController {
     }
     
     if (new_price) {
-      const priceIsNotPositiveFloatNumber = isNaN(new_price) || new_price <= 0 || Number.isInteger(new_price);
+      const priceIsNotPositiveNumber = isNaN(new_price) || new_price <= 0;
     
-      if (priceIsNotPositiveFloatNumber) {
+      if (priceIsNotPositiveNumber) {
         throw new AppError('O preço do prato deve ser um número decimal maior que zero.');
       }
 
@@ -372,11 +374,11 @@ class DishesController {
 
         return response.status(201).json([
           {
-            message: 'Prato cadastrado com sucesso.'
+            updatedDish,
+            newDishIngredients
           },
           {
-              updatedDish,
-              newDishIngredients
+            message: 'Prato cadastrado com sucesso.'
           }
         ]);
       

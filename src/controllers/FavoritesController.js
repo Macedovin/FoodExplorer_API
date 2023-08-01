@@ -31,10 +31,14 @@ class FavoritesController {
       dish_id
     });
 
-  return response.status(201).json({
-      favorited,       
-      message: 'Prato favoritado com sucesso.'
-    });
+  return response.status(201).json([
+    {
+      favorited
+    },
+    {
+      message: 'Prato favoritado com sucesso.'      
+    }    
+  ]);
 }
 
   async index(request, response) {
