@@ -24,6 +24,17 @@ class RolesController {
       message: 'Persona cadastrada com sucesso.'
     });
   }
+
+  async index(request, response) {
+    const applicationRoles = await knex('roles')
+      .select([
+        'roles.id',
+        'roles.name'
+      ])
+      .orderBy('roles.id');
+
+    return response.json(applicationRoles);
+  }
 }
 
 module.exports = RolesController;

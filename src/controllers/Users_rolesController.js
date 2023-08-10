@@ -23,7 +23,7 @@ class Users_roles {
     
     return response.json(usersWithRoles);
   } 
-  
+
   async update(request, response) {
     const { new_userRole } = request.body;
 
