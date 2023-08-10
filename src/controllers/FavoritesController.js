@@ -51,6 +51,7 @@ class FavoritesController {
         'dishes.id as dish_id',
         'dishes.name',
         'dishes.picture',
+        'dishes.price'
       ])
       .innerJoin('dishes', 'dishes.id', 'favorites.dish_id')
       .where({ user_id });
