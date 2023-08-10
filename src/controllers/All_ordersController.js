@@ -26,6 +26,7 @@ class All_ordersController {
     .select([
       'order_id',
       'dish_id',
+      'dishes.name as dish_name',
       'quantity',
       'price',
     ])

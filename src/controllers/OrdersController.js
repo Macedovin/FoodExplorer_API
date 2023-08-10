@@ -15,9 +15,6 @@ class OrdersController {
     }, async function(error, reqDishes) {
 
       try {
-
-        
-        //const reqDishes = results;
         
         if(reqDishes.length === 0) {
           throw new AppError('Ao menos um prato e sua quantidade devem ser passados para a realização do pedido.')
@@ -56,7 +53,9 @@ class OrdersController {
           status_id: 1
         })
 
-        return response.status(201).json('Pedido cadastrado com sucesso.');
+        return response.status(201).json({
+          message: 'Pedido cadastrado com sucesso.'
+        });
 
       } catch (error) {
 
@@ -114,7 +113,20 @@ class OrdersController {
 
     const { id } = request.params; 
 
-    const [orderUserAndDate] = await knex('orders').where({ id, user_id });
+    const [orderUserAndDate] = await knex('orders_statuses')
+    .select([
+      'orders.id as order_id',
+      'user_id',
+      'users.name as user_name',
+      'orders.created_at as order_date',
+      'status_id',
+      'statuses.value as status',
+    ])
+    .innerJoin('orders', 'orders.id', 'orders_statuses.order_id')
+    .innerJoin('statuses', 'statuses.id', 'orders_statuses.status_id')
+    .leftJoin('users', 'users.id', 'orders.user_id')
+    .where({ user_id })
+    .andWhere({ order_id: id });
 
     if(!orderUserAndDate || orderUserAndDate.length === 0) {
       throw new AppError('Pedido não encontrado.');
@@ -198,7 +210,9 @@ class OrdersController {
           updated_at: knex.fn.now()
         })
 
-        return response.status(201).json('Pedido atualizado com sucesso')
+        return response.status(201).json({
+          message: 'Pedido atualizado com sucesso.'
+        });
 
       } catch (error) {
 

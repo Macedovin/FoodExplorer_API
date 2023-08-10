@@ -8,6 +8,8 @@ const ordersController = new OrdersController();
 
 const ensureAuthenticated = require('../middlewares/ensureAuthenticated');
 
+const ensureUserRoles = require('../middlewares/ensureUserRoles');
+
 ordersRoutes.use(ensureAuthenticated);
 
 ordersRoutes.post('/', ordersController.create);
@@ -18,6 +20,6 @@ ordersRoutes.get('/:id', ordersController.show);
 
 ordersRoutes.put('/:id', ordersController.update);
 
-ordersRoutes. delete('/:id', ordersController.delete);
+ordersRoutes. delete('/:id', ensureUserRoles(['ROLE_ADMIN']), ordersController.delete);
 
 module.exports = ordersRoutes;
