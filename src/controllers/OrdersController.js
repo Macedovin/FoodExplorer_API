@@ -80,7 +80,10 @@ class OrdersController {
       .where({ user_id })
       .innerJoin('orders', 'orders.id', 'orders_statuses.order_id')
       .innerJoin('statuses', 'statuses.id', 'orders_statuses.status_id')
-      .orderBy('status_id', 'asc');
+      .orderBy([
+        { column: 'status_id', order: 'asc' },
+        { column: 'order_id', order: 'desc'}
+      ]);
       
     const dishesOfThisUser = await knex('dishes_orders')
       .select([
