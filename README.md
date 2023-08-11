@@ -3,7 +3,7 @@
 </p>
 
 <h4 align="center"> 
-	 Status: Under development.
+	 Status: Concluded.
 </h4>
 
 <br/>
@@ -30,6 +30,8 @@
 
 ## About
 
+<br/>
+
 > An API that helps at restaurant managing through an interactive menu.
 
 Project developed as a result of the teachings learned at Rocketseat's program Explorer, a FullStack developer formation.
@@ -42,6 +44,8 @@ As the second persona you will be able to create, see/ read, edit and delete (CR
 
 ## Preview
 
+<br/>
+
 The image below shows the database model used: 
 
 <h2 align="center">
@@ -50,7 +54,7 @@ The image below shows the database model used:
 
 ## Tech Stack and tools
 
-<div style="display: inline_block"><br>
+<div style="display: inline_block"><br/>
 	<img align="center" height="40" width="40" src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-plain.svg" alt="Macedovin-Js" />
 	<img align="center" height="40" width="40" src="https://github.com/devicons/devicon/blob/v2.15.1/icons/nodejs/nodejs-plain.svg" alt="Macedovin-NodeJs" />
 	<img align="center" height="40" width="40" src="https://github.com/devicons/devicon/blob/v2.15.1/icons/npm/npm-original-wordmark.svg" alt="Macedovin-NPM" />
@@ -64,10 +68,12 @@ The image below shows the database model used:
 	<img align="center" height="40" width="100" src="./README-assets/jwtio-json-web-token.svg" alt="Macedovin-JSON Web Token" />	
 	<img align="center" height="30" width="80" src="./README-assets/Bcryptjs.png" alt="Macedovin-BcryptJS" />
 	<img align="center" height="30" width="80" src="https://raw.githubusercontent.com/Unitech/pm2/master/pres/pm2-v4.png" alt="Macedovin-PM2" />
-	<img align="center" height="20" width="70" src="./README-assets/Lucid_chart-logo.png" alt="Macedovin-Lucid Chart" />
+	<img align="center" height="20" width="90" src="./README-assets/Lucid_chart-logo.png" alt="Macedovin-Lucid Chart" />
 </div>
 
 ## Functionalities
+
+<br/>
 
 - Register a user;
 - Update user name, email, password, and avatar;
@@ -88,23 +94,25 @@ The image below shows the database model used:
 
 ## Utilization
 
-- [Initializing the application](#initializaing-the-application)
+- [Initializing the application](#initializing-the-application)
 - [Using the resources](#using-the-resources)
+	- [Important](#important)
 	- [Sessions](#sessions)
 		- [Create](#green_circle-post-sessions) 
 	- [Users and roles](#users-and-roles)
 		- [Create roles](#green_circle-post-roles)
-		- [Create users](#green_circle-post-users)
-		- [List/ Index all roles](#large_blue_circle-get-users_roles)
+		- [List/ Index application roles](#large_blue_circle-get-roles)
+		- [Show roles](#large_blue_circle-get-usersroles)
 		- [Update users roles](#yellow_circle-patch-users_rolesid)
 	- [Users](#users)
+		- [Create users](#green_circle-post-users)
 		- [Update users](#orange_circle-put-users)
 		- [Update avatar](#yellow_circle-patch-usersavatar)
-		- [Show roles](#large_blue_circle-get-usersroles)
+		- [List/ Index all users with roles](#large_blue_circle-get-users_roles)
 	- [Dishes Categories](#dishes-categories)
-		- [Create categories](#green_circle-post-dishes_categories)
-		- [List/ Index all categories](#large_blue_circle-get-dishes_categories)
-		- [Delete category](#red_circle-delete-dishes_categoriesid)
+		- [Create categories](#green_circle-post-dish_categories)
+		- [List/ Index all categories](#large_blue_circle-get-dish_categories)
+		- [Delete category](#red_circle-delete-dish_categoriesid)
 	- [Dishes](#dishes)
 		- [Create dishes](#green_circle-post-dishes)
 		- [List/ Index all dishes](#large_blue_circle-get-dishes)
@@ -134,7 +142,6 @@ The image below shows the database model used:
 		- [Avatar](#large_blue_circle-get-filesavatarimage-nameext)
 		- [Picture](#large_blue_circle-get-filespictureimage-nameext)
 
-
 ---
 
 ### Initializing the application
@@ -149,6 +156,16 @@ To view that application functioning follow along the next steps:
 	```
 
 	> To follow this step, [NodeJS with NPM](https://nodejs.org/) is required.
+
+- Define local variables as bellow:
+
+	```bash	
+	PORT=3333
+
+	AUTH_SECRET=698dc19d489c4e4db73e28a713eab07b
+
+	ADMIN_PASSWORD=I7pQfr8d6899w1I
+	```
 
 - The next step is to run the start command line:
 
@@ -172,6 +189,12 @@ To view that application functioning follow along the next steps:
 ---
 
 ### Using the resources
+
+#### Important!
+
+> **First of all, [create useful roles](#green_circle-post-roles) for the establishment.**
+
+> **Second step should be [create users](#green_circle-post-users), more precisely, two specific first users to attribute for each one a role of the application, setting up things for the other steps**
 
 - #### **Sessions**
 
@@ -215,8 +238,8 @@ To view that application functioning follow along the next steps:
 	#### :green_circle: **POST/ roles**  
 
 	**Description:** Create a role 
-
-	First of all, create useful roles for the establishment. For now, this API is handling tow personas: _administrator_ and _default user_. To create a role, send a request at URL:
+	
+	For now, this API is handling tow personas: __*administrator*__ and __*default user*__. To create a role, send a request at URL:
 
 	`http://localhost:3333/roles`
 
@@ -251,11 +274,107 @@ To view that application functioning follow along the next steps:
 	}
 	```
 
+	#### :large_blue_circle: **GET/ roles**
+	
+	**Description:** List all existing roles
+
+	To see all existing roles in application send a request at URL bellow:
+
+	`http://localhost:3333/roles`
+
+	**ATTENTION**:
+
+	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
+
+	**Request**
+
+		> These requests don't need body parameters.
+
+	**Response**
+
+	Request being successful response will be something like this:
+
+	```json
+	[
+		{
+			"id": 1,
+			"name": "ROLE_USER"
+		},
+		{
+			"id": 2,
+			"name": "ROLE_ADMIN"
+		}
+	]
+	```
+
+	#### :large_blue_circle: **GET/ users/roles**
+
+	**Description:** Show the roles of the current authenticated user
+
+	Access and verify the roles of a specific authenticated user.The URL for this is:
+
+	`http://localhost:3333/users/roles`
+
+	**Request**
+
+		>	These requests don't need body parameters.
+	
+	**Response**
+
+	Everything going well, the response will be something like this:
+
+	- **Administrator**
+
+	```json
+	[
+		"ROLE_USER",
+		"ROLE_ADMIN"
+	]
+	```
+
+	- **Default user**
+
+	```json
+	[
+		"ROLE_USER"
+	]
+	```
+
+	#### :yellow_circle: **PATCH/ users_roles/:id**
+
+	**Description:** Update any user's roles
+
+	To update a user's role send a request at the URL:
+
+	`http://localhost:3333/users_roles/:id`
+
+	**ATTENTION**:
+
+	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
+
+	**Request**
+
+	```json
+	{
+		"new_userRole": [
+			"ROLE_ADMIN"
+		]
+	}
+	```
+
+	**Response**
+
+	```json
+	{
+		"message": "Nova persona atribuída ao usuário com sucesso."
+	}	
+	```
+
+- #### **Users**
+
 	#### :green_circle: **POST/ users**
 
-	**Description:** Create a user
-	
-	Second step is create two specific first users: 
+	**Description:** Create users 
 
 	- "Administrator
 
@@ -271,9 +390,9 @@ To view that application functioning follow along the next steps:
 
 	**ATTENTION**:
 
-	> As a security, it is advisable to encrypt the admin password, using the tool of your choice (might be MD5HASH). Save it for security and future access.
+	> As a security, it is advisable to encrypt the admin password, using the tool of your choice (this [online safe password generator](http://www.sha1-online.com/secure-password-generator.php) was used). Save it for security and future access.
 
-	> All users created without "roles" sended within request will be assigned as "__*users/ default *__". 
+	> All users created without "roles" sent within request will be assigned as "__*users/ default *__". 
 
 	**Requests**
 
@@ -335,11 +454,85 @@ To view that application functioning follow along the next steps:
 	]
 	```
 
-	#### :large_blue_circle: **GET/ users_roles**
-	
-	**Description:** List all existing roles
+	#### :orange_circle: **PUT/ users**
 
-	To see all existing roles in application send a request at URL bellow:
+	**Description:**  Update a user
+
+	Any user can update your own profile data changing few information. They can be changed one by one only, or all at once.
+
+	To achieve this a request must be sent to the URL bellow:
+
+	`http://localhost:3333/users`
+
+	**Request**
+
+	```json
+	{
+		"new_name": "Updated name",
+		"new_email": "new@email.com",
+		"new_password": "123456",
+		"current_password": "123"
+	}
+	```
+
+	**Response**
+
+	```json
+	{
+		"updatedUser": {
+			"name": "Updated name",
+			"email": "new@email.com",
+			"avatar": null,
+			"updated_at": "2023-06-30 21:37:36"
+		},
+		"message": "Os dados foram atualizados com sucesso."
+	}
+	```
+	
+	> By default the user avatar field is __*null*__ as the user can be created without an avatar.
+	
+	> ext === extension
+	
+	#### :yellow_circle: **PATCH/ users/avatar**
+
+	**Description:**  Update a user avatar image
+
+	Any user can update your own avatar image file.
+
+	To achieve this send a request to the URL bellow:
+
+	`http://localhost:3333/users/avatar`
+
+	**ATTENTION**:
+
+	> By default the user avatar field is __*null*__ as the user can be created without an avatar.
+
+	**Request**
+
+		> Send the chosen image file inside a form (new FormData( )) appended in a field called "avatar".
+
+	**Response**
+
+	If everything goes fine, the response will be something like this:
+
+	```json
+	{
+		"updatedUserWithAvatar": {
+			"name": "Vinicius",
+			"email": "vinicius@email.com",
+			"avatar": "3a1f55a9d727b6adbb67-Updated-file-name_avatar.ext",
+			"updated_at": "2023-07-31 03:02:39"
+		}
+	}
+	```
+
+	> ext === extension
+
+	#### :large_blue_circle: **GET/ users_roles**
+
+	**Description:** List all users registered in application plus their major role 
+
+	To see all existing users send a request at URL bellow:
 
 	`http://localhost:3333/users_roles`
 
@@ -414,148 +607,9 @@ To view that application functioning follow along the next steps:
 	]
 	``` 
 
-	#### :yellow_circle: **PATCH/ users_roles/:id**
-
-	**Description:** Update any user's roles
-
-	To update a user's role send a request at the URL:
-
-	`http://localhost:3333/users_roles/:id`
-
-	**ATTENTION**:
-
-	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
-
-	**Request**
-
-	```json
-	{
-		"new_userRole": [
-			"ROLE_ADMIN"
-		]
-	}
-	```
-
-	**Response**
-
-	```json
-	{
-		"message": "Nova persona atribuída ao usuário com sucesso."
-	}	
-	```
-
-- #### **Users**
-
-	#### :orange_circle: **PUT/ users**
-
-	**Description:**  Update a user
-
-	Any user can update your own profile data changing few information. They can be changed one by one only, or all at once.
-
-	To achieve this a request must be send to the URL bellow:
-
-	`http://localhost:3333/users`
-
-	**Request**
-
-	```json
-	{
-		"new_name": "Updated name",
-		"new_email": "new@email.com",
-		"new_password": "123456",
-		"current_password": "123"
-	}
-	```
-
-	**Response**
-
-	```json
-	{
-		"updatedUser": {
-			"name": "Updated name",
-			"email": "new@email.com",
-			"avatar": null,
-			"updated_at": "2023-06-30 21:37:36"
-		},
-		"message": "Os dados foram atualizados com sucesso."
-	}
-	```
-	
-	> By default the user avatar field is __*null*__ as the user can be created without an avatar.
-	
-	> ext === extension
-	
-	#### :yellow_circle: **PATCH/ users/avatar**
-
-	**Description:**  Update a user avatar image
-
-	Any user can update your own avatar image file.
-
-	To achieve this send a request to the URL bellow:
-
-	`http://localhost:3333/users/avatar`
-
-	**ATTENTION**:
-
-	> By default the user avatar field is __*null*__ as the user can be created without an avatar.
-
-	**Request**
-
-		> Send the chosen image file inside a form (new FormData( )) appended in a field called "avatar".
-
-	**Response**
-
-	If everything goes fine, the response will be something like this:
-
-	```json
-	{
-		"updatedUserWithAvatar": {
-			"name": "Vinicius",
-			"email": "vinicius@email.com",
-			"avatar": "3a1f55a9d727b6adbb67-Updated-file-name_avatar.ext",
-			"updated_at": "2023-07-31 03:02:39"
-		}
-	}
-	```
-
-	> ext === extension
-
-	#### :large_blue_circle: **GET/ users/roles**
-
-	**Description:** Show the roles of the current authenticated user
-
-	Access and verify the roles of an authenticated user. URL for this:
-
-	`http://localhost:3333/roles`
-
-	**Requests**
-
-		>	These requests don't need body parameters.
-	
-	**Response**
-
-	Everything going well, the response will be something like this:
-
-	- **Administrator**
-
-	```json
-	[
-		"ROLE_USER",
-		"ROLE_ADMIN"
-	]
-	```
-
-	- **Default user**
-
-	```json
-	[
-		"ROLE_USER"
-	]
-	```
-
 - #### **Dishes Categories**
 
-	#### :green_circle: **POST/ dishes_categories**
+	#### :green_circle: **POST/ dish_categories**
 		
 	**Description:** Create categories to group dishes
 
@@ -565,13 +619,13 @@ To view that application functioning follow along the next steps:
 
 	In order to create a category send a request to the URL bellow:
 
-	`http://localhost:3333/categories`
+	`http://localhost:3333/dish_categories`
 
 	**ATTENTION**:
 
 	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
 
-	**Requests**
+	**Request**
 
 	```json
 	{
@@ -591,19 +645,19 @@ To view that application functioning follow along the next steps:
 	}
 	```
 
-	#### :large_blue_circle: **GET/ dishes_categories**
+	#### :large_blue_circle: **GET/ dish_categories**
 
 	**Description:** List/ Index all categories
 	
 	To see all existing categories in application send a request to the URL bellow:  
 
-	`http://localhost:3333/categories`
+	`http://localhost:3333/dish_categories`
 
 	**ATTENTION**:
 
 	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
 
-	**Requests**
+	**Request**
 
 		> These requests don't need body parameters.
 
@@ -631,19 +685,19 @@ To view that application functioning follow along the next steps:
 	]
 	```
 
-	#### :red_circle: **DELETE/ dishes_categories/:id**
+	#### :red_circle: **DELETE/ dish_categories/:id**
 
 	**Description:** Delete a specific category
 
-	In order to delete an existing category a request must be sended to the URL:
+	In order to delete an existing category a request must be sent to the URL:
 
-	`http://localhost:3333/categories/:id`
+	`http://localhost:3333/dish_categories/:id`
 
 	**ATTENTION**:
 
 	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
 
-	**Requests**
+	**Request**
 
 		> These requests don't need body parameters.
 
@@ -676,7 +730,7 @@ To view that application functioning follow along the next steps:
 
 	> By default the dish picture field is __*null*__ as a dish can be created without a picture.
 
-	**Requests**
+	**Request**
 
 	```json
 	{
@@ -714,9 +768,9 @@ To view that application functioning follow along the next steps:
 	]
 	```
 
-	> 1 -> The ID number of the created dish 
+	> 1 -> The ID number of the created dish. 
 
-	> ext === extension
+	> ext === extension.
 
 	#### :large_blue_circle: **GET/ dishes**
 
@@ -726,7 +780,7 @@ To view that application functioning follow along the next steps:
 
 	`http://localhost:3333/dishes`
 
-	**Requests**
+	**Request**
 
 		> These requests don't need body parameters.
 
@@ -903,11 +957,11 @@ To view that application functioning follow along the next steps:
 
 	**Description:** Show a specific dish
 
-	In order to access/ see an specific dish a request must be sended to the URL bellow:  
+	In order to access/ see an specific dish a request must be sent to the URL bellow:  
 
 	`http://localhost:3333/dishes/:id`
 
-	**Requests**
+	**Request**
 
 		> These requests don't need body parameters.
 
@@ -966,7 +1020,7 @@ To view that application functioning follow along the next steps:
 
 	> By default the dish picture field is __*null*__ as a dish can be created without a picture.
 
-	**Requests**
+	**Request**
 
 	```json
 	{
@@ -1026,7 +1080,7 @@ To view that application functioning follow along the next steps:
 	
 	Existing and registered dishes can be deleted at any time. 
 
-	In order to delete an existing dish a request using the **DELETE** method must be sended to the URL bellow:
+	In order to delete an existing dish a request using the **DELETE** method must be sent to the URL bellow:
 
 	`http://localhost:3333/dishes/:id`
 
@@ -1034,7 +1088,7 @@ To view that application functioning follow along the next steps:
 
 	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
 
-	**Requests**
+	**Request**
 
 		> These requests don't need body parameters.
 
@@ -1065,7 +1119,7 @@ To view that application functioning follow along the next steps:
 
 	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
 
-	**Requests** 
+	**Request** 
 
 	```json
 	{
@@ -1087,7 +1141,7 @@ To view that application functioning follow along the next steps:
 	
 	Existing and registered ingredients can be deleted at any time. 
 
-	In order to delete an ingredient a request must be sended to the URL bellow:
+	In order to delete an ingredient a request must be sent to the URL bellow:
 
 	`http://localhost:3333/ingredients/:id`
 
@@ -1095,7 +1149,7 @@ To view that application functioning follow along the next steps:
 
 	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
 
-	**Requests**
+	**Request**
 
 		> These requests don't need body parameters.
 
@@ -1119,7 +1173,7 @@ To view that application functioning follow along the next steps:
 
 	`http://localhost:3333/favorites/:dish_id`
 
-	**Requests**
+	**Request**
 
 		> These requests don't need body parameters.
 
@@ -1144,7 +1198,7 @@ To view that application functioning follow along the next steps:
 
 	`http://localhost:3333/favorites`
 	
-	**Requests**
+	**Request**
 
 		> These requests don't need body parameters.
 
@@ -1159,14 +1213,16 @@ To view that application functioning follow along the next steps:
 			"user_id": 2,
 			"dish_id": 5,
 			"name": "Third beverage",
-			"picture": "ac4911ab4f1f2f19c1eb-Dish-picture-name.ext"
+			"picture": "ac4911ab4f1f2f19c1eb-Dish-picture-name.ext",
+			"price": 12.99
 		},
 		{
 			"favorite_id": 4,
 			"user_id": 2,
 			"dish_id": 16,
 			"name": "Fifth meal",
-			"picture": null
+			"picture": null,
+			"price": 22.50
 		}
 	]
 	```
@@ -1183,7 +1239,7 @@ To view that application functioning follow along the next steps:
 
 	`http://localhost:3333/favorites/:dish_id`
 
-	**Requests**
+	**Request**
 
 		> These requests don't need body parameters.
 
@@ -1201,31 +1257,408 @@ To view that application functioning follow along the next steps:
 	
 	**Description:** Create orders
 	
+	All registered users can make dishes orders requests defining the dish and it's quantity. 
+
+	In order to achieve this, a request must be sent at the URL bellow:
+
+	`http://localhost:3333/orders`
+
+	**ATTENTION**:
+
+	> The orders created will have the status ID of 1 (one), by default. So, the first [status created](#green_circle-post-statuses) must be de default status for the orders in each establishment. 
+
+	**Request**
+
+	```json
+	[
+		{
+			"dish_id": 18,
+			"quantity": 1
+		},
+		{
+			"dish_id": 2,
+			"quantity": 3
+		},
+		{
+			"dish_id": 20,
+			"quantity": 7
+		},
+		{
+			"dish_id": 9,
+			"quantity": 1
+		}
+	]
+	```
+
+	**Response**
+
+	Everything going well, this will be the response:
+
+	```json
+	{
+		"message": "Pedido cadastrado com sucesso."
+	}
+	```
+
+	> A JSON message along with a status code 201.
+
 	#### :large_blue_circle: **GET/ orders**
 
 	**Description:** List/ Index all the orders of a specific user
+
+	Any registered user can have access to their own orders history inside application.  
+
+	To list all orders of made by a user send a request to the URL  bellow:
+
+	`http://localhost:3333/orders`
+
+	**Request**
+
+		> These requests don't need body parameters.
+
+	**Response**
+
+	As a result, the response will be like this:
+
+	```json
+	[
+		{
+			"order_id": 36,
+			"created_at": "2023-08-11 09:16:01",
+			"status_id": 1,
+			"status": "Pendente",
+			"dishes": [
+				{
+					"order_id": 36,
+					"dish_id": 1,
+					"name": "Meal 1",
+					"quantity": 2
+				},
+				{
+					"order_id": 36,
+					"dish_id": 4,
+					"name": "Beverage 2",
+					"quantity": 1
+				}
+			]
+		},
+		{
+			"order_id": 32,
+			"created_at": "2023-08-02 20:54:42",
+			"status_id": 1,
+			"status": "Pendente",
+			"dishes": [
+				{
+					"order_id": 32,
+					"dish_id": 2,
+					"name": "Meal 2",
+					"quantity": 3
+				},
+				{
+					"order_id": 32,
+					"dish_id": 9,
+					"name": "Dessert",
+					"quantity": 1
+				},
+				{
+					"order_id": 32,
+					"dish_id": 18,
+					"name": "Another good meal",
+					"quantity": 1
+				},
+				{
+					"order_id": 32,
+					"dish_id": 20,
+					"name": "Beverage",
+					"quantity": 7
+				}
+			]
+		},
+		{
+			"order_id": 33,
+			"created_at": "2023-08-02 20:54:53",
+			"status_id": 1,
+			"status": "Entregue",
+			"dishes": [
+				{
+					"order_id": 33,
+					"dish_id": 18,
+					"name": "Another good",
+					"quantity": 1
+				}
+			]
+		}
+	]
+	```
 	
 	#### :large_blue_circle: **GET/ orders/:id**
 
 	**Description:** Show a specific order
+
+	Any registered user can access each one of their own previous orders in detail.
+
+	To access a specific order of any registered user, send the order ID to the URL bellow:
+
+	`http://localhost:3333/orders/:id`
+
+	**Request**
+
+		> These requests don't need body parameters.
+
+	**Response**
+
+	```json
+	{
+		"order_id": 1,
+		"user_id": 3,
+		"user_name": "User",
+		"order_date": "2023-08-01 17:38:08",
+		"status_id": 1,
+		"status": "Pendente",
+		"orderDishes": [
+			{
+				"dish_id": 1,
+				"quantity": 1,
+				"price": 25.99
+			},
+			{
+				"dish_id": 2,
+				"quantity": 2,
+				"price": 52.9
+			},
+			{
+				"dish_id": 3,
+				"quantity": 2,
+				"price": 2.9
+			}
+		],
+		"orderTotal": [
+			{
+				"Total": 137.59
+			}
+		]
+	}
+	```
 	
 	#### :orange_circle: **PUT/ orders/:id**
 
 	**Description:** Update orders
 	
+	If wanted or necessary registered users can be allowed to update one of their orders.
+
+	In order to achieve this a request must be sent to the URL bellow:
+
+	`http://localhost:3333/orders/:id`
+
+	**Request**
+
+	```json
+	[
+		{
+			"dish_id": 2,
+			"quantity": 3
+		},
+		{
+			"dish_id": 1,
+			"quantity": 2
+		}
+	]
+	```
+
+	**Response**
+
+	Everything going well, this will be the response:
+
+	```json
+	{
+		"message": "Pedido atualizado com sucesso."
+	}
+	```
+
 	#### :red_circle: **DELETE/ orders/:id**
 
 	**Description:** Delete orders
-	
+
+	If wanted or necessary any order in application can be deleted.
+
+	In order to delete an order from any user , send a request using the **DELETE** method to the URL bellow:
+
+	`http://localhost:3333/orders/:id`
+
+	**ATTENTION**:
+
+	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
+
+	**Request**
+
+		> These requests don't need body parameters.
+
+	**Response**
+
+	```json
+	{
+		"message": "Pedido excluído com sucesso."
+	}
+	```
+
 - #### **All orders**
 
 	#### :large_blue_circle: **GET/ all_orders**
 	
 	**Description:** List/ Index all application's orders
+
+	All orders made using the application can be indexed ordered by it's status.
+
+	To access this data send a request to the URL bellow:
+
+	`http://localhost:3333/all_orders`
+
+	**ATTENTION**:
+
+	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
+
+	**Request**
+
+		> These requests don't need body parameters.
+
+	**Response**
+
+	The response to this request will be something like this:
+
+	```json
+	[
+		{
+			"order_id": 33,
+			"user_id": 10,
+			"user_name": "User name 10",
+			"order_date": "2023-08-02 20:54:53",
+			"status_id": 1,
+			"status": "Pendente",
+			"dishes": [
+				{
+					"order_id": 33,
+					"dish_id": 18,
+					"dish_name": "New meal name",
+					"quantity": 1,
+					"price": 12.57
+				}
+			]
+		},
+				{
+			"order_id": 31,
+			"user_id": 4,
+			"user_name": "Cláudio ",
+			"order_date": "2023-08-02 20:54:06",
+			"status_id": 1,
+			"status": "Pendente",
+			"dishes": [
+				{
+					"order_id": 29,
+					"dish_id": 2,
+					"dish_name": "Refeição 2",
+					"quantity": 3,
+					"price": 52.9
+				},
+				{
+					"order_id": 29,
+					"dish_id": 18,
+					"dish_name": "Novo nome de um prato",
+					"quantity": 1,
+					"price": 12.57
+				}
+			]
+		},
+		{
+			"order_id": 32,
+			"user_id": 10,
+			"user_name": "User name 15",
+			"order_date": "2023-08-02 20:54:42",
+			"status_id": 1,
+			"status": "Preparando",
+			"dishes": [
+				{
+					"order_id": 32,
+					"dish_id": 2,
+					"dish_name": "Meal 2",
+					"quantity": 3,
+					"price": 52.9
+				},
+				{
+					"order_id": 32,
+					"dish_id": 9,
+					"dish_name": "Dessert",
+					"quantity": 1,
+					"price": 6.90
+				},
+				{
+					"order_id": 32,
+					"dish_id": 18,
+					"dish_name": "Beverage 4",
+					"quantity": 1,
+					"price": 12.57
+				},
+				{
+					"order_id": 32,
+					"dish_id": 20,
+					"dish_name": "Another meal",
+					"quantity": 7,
+					"price": 19.99
+				}
+			]
+		},
+		{
+			"order_id": 30,
+			"user_id": 4,
+			"user_name": "User name 3",
+			"order_date": "2023-08-02 20:54:20",
+			"status_id": 1,
+			"status": "Entregue",
+			"dishes": [
+				{
+					"order_id": 30,
+					"dish_id": 1,
+					"dish_name": "First meal name",
+					"quantity": 1,
+					"price": 12.57
+				}
+			]
+		}
+	]
+	```
 	
 	#### :yellow_circle: **PATCH/ all_orders/:id**
 	
 	**Description:** Update orders statuses
+
+	Update orders by changing their status.
+
+	To change a specific order status send a request at the URL bellow, passing the order ID as route parameter: 
+
+	`http://localhost:3333/all_orders/:id`
+
+	**ATTENTION**:
+
+	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
+
+	**Request**
+
+	```json
+	{
+		"new_status": "2"
+	}
+	```
+
+	> 2 -> The ID number of an existing status.
+
+	**Response**
+
+	No issues happening, the response will be the one bellow:
+
+	```json
+	{
+		"message": "Pedido atualizado com sucesso."
+	}
+	```	
 
 - #### **Statuses** 
 
@@ -1233,16 +1666,151 @@ To view that application functioning follow along the next steps:
 
 	**Description:** Create a new status for orders
 
+	> By default, the application has no status.
+
+	In order to create the needed statuses for each establishment and situation, send it's "__*value*__" as a request body parameter to the URL bellow:
+
+	`http://localhost:3333/statuses`
+
+	**ATTENTION**:
+
+	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
+
+	**Request**
+
+	```json
+	{
+		"value": "Pendente"
+	}
+	```
+
+	**Response**
+
+	```json
+	{
+		"message": "Status cadastrado com sucesso."
+	}
+	```
+
 	#### :large_blue_circle: **GET/ statuses**
 	
 	**Description:** List/ Index all existing statuses
+
+	List all application existing statuses.
+
+	In order to access these data a request using the **GET** method must be sended to URL bellow:
+
+	`http://localhost:3333/statuses`
+
+	**ATTENTION**:
+
+	> Only an user with roles type ADMIN can receive response on this request. Otherwise, 401, UNAUTHORIZED response will be returned.
+
+	**Request**
+
+		> These requests don't need body parameters.
+
+	**Response**
+
+	Requests being successful, responses will be something like this: 
+
+	```json
+	[
+		{
+			"id": 1,
+			"value": "Pendente"
+		},
+		{
+			"id": 2,
+			"value": "Preparando"
+		},
+		{
+			"id": 3,
+			"value": "Entregue"
+		}
+	]
+	```
 
 - #### **Files**
 
 	#### :large_blue_circle: **GET/ files/avatar/image-name.ext**
 
 	**Description:** Request an Avatar file as response
+
+	Serves an image previously [uploaded as "__*avatar*__"](#yellow_circle-patch-usersavatar) to a front-end environment.
+
+	To access the file send a request to the URL bellow:
+
+	`http://localhost:3333/files/avatar/3a1f55a9d727b6adbb67-User-image-name.ext`  
+
+	> ext === file extension
+
+	**Request**
+
+		> These requests don't need body parameters.
+
+	**Response**
+
+	Everything going well, the avatar image file will be received as response.	
 	
 	#### :large_blue_circle: **GET /files/picture/image-name.ext**
 
 	**Description:** Request a Picture file as response
+
+	Serves an image previously uploaded as "__*picture*__" at the [creation](#green_circle-post-dishes) or at [update of a dish](#orange_circle-put-dishesid) to a front-end environment.
+
+	To access the file send a request to the URL bellow:
+
+	`http://localhost:3333/files/picture/3a1f55a9d727b6adbb67-Dish-image-name.ext`  
+
+	> ext === file extension
+
+	**Request**
+
+		> These requests don't need body parameters.
+
+	**Response**
+
+	Everything going well, the "picture" image file will be received as response.	
+
+## Publication
+
+<br/>
+
+> Clone this repository!
+
+- Make a clone of this repository:
+
+	```bash
+	git clone git@github.com:Macedovin/FoodExplorer_API.git
+	```
+
+- Access the repository directory:
+
+	```bash
+	$cd FoodExplorer_API.git
+	```
+
+- [Initialize the application](#initializing-the-application)
+
+**or**
+
+> See this API in action:
+
+**⚠️ Important!!!** 
+	
+	This project is using free hoisting for the backend, so there may be delays in server response time.
+
+- Deploy do frontend: https://foodexplorerv.netlify.app
+
+## Author
+
+<br/>
+<img align="left" src="https://avatars.githubusercontent.com/Macedovin?size=100" alt="Foto de Macedovin">
+
+Projeto criado pela [Rocketseat](https://github.com/Rocketseat) e desenvolvido por [Vinicius&nbsp;Macedo](https://github.com/Macedovin).
+
+<a href="mailto:macedo.vp@gmail.com" target="_blank"><img src="https://img.shields.io/badge/Email-D14836?style=flat&logo=gmail&logoColor=white" alt="Email Badge" height="25"></a>&nbsp;
+<a href="https://www.linkedin.com/in/vinicius-macedop/" target="_blank"><img src="https://img.shields.io/badge/Linkedin-0077B5?style=flat&logo=linkedin&logoColor=white" alt="LinkedIn Badge" height="25"></a>&nbsp;
+
+<br clear="left"/>
